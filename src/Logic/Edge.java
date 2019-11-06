@@ -9,7 +9,7 @@ public class Edge {
         this.start = origen;
         this.end = destino;
         this.weight = peso;
-        this.id = 3000 + numero;
+        this.id = numero;
     }
 
     public boolean isPath(Node origen, Node destino){

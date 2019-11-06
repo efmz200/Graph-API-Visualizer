@@ -8,7 +8,7 @@ public class Node {
 
     public Node(int numero, String telefono){
         this.entity = telefono;
-        this.id = 2000 + numero;
+        this.id = numero;
         this.inDegree = 0;
         this.outDegree = 0;
     }
