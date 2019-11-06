@@ -18,16 +18,20 @@ public class test {
         G.addNode(6,numero6);
 
         G.addEdge(numero1,numero2,1,1);
-        G.addEdge(numero2,numero3,2,1);
-        G.addEdge(numero3,numero2,3,1);
-        G.addEdge(numero2,numero4,4,1);
-        G.addEdge(numero4,numero5,5,1);
-        G.addEdge(numero3,numero6,6,1);
-        G.addEdge(numero5,numero6,7,1);
-        G.addEdge(numero3,numero4,8,1);
+        G.addEdge(numero2,numero3,2,2);
+        G.addEdge(numero3,numero2,3,3);
+        G.addEdge(numero2,numero4,4,4);
+        G.addEdge(numero4,numero5,5,5);
+        G.addEdge(numero3,numero6,6,6);
+        G.addEdge(numero5,numero6,7,7);
+        G.addEdge(numero3,numero4,8,8);
+        System.out.println("");
+        G.adyacencyList();
+        System.out.println("");
+        G.addEdge(numero2,numero4,6,9);
 
-        G.breadthFirstTraversal();
-        System.out.println('\n' + '\n');
+        // G.breadthFirstTraversal();
+        // System.out.println('\n' + '\n');
         G.adyacencyList();
     }
 }

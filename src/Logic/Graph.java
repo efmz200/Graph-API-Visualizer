@@ -22,32 +22,51 @@ public class Graph {
         nodes.add(new Node(numero, telefono));
     }
 
-    public void addEdge(String origen, String destino, int peso, int numero){
+    public Node getNode(String telefono){
+        for (Node i: nodes){
+            if (i.getEntity().equals(telefono)){
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public Node getNode(int id){
+        for(Node i: nodes){
+            if (i.getId() == id){
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public void addEdge(String origen, String destino, int peso, int id){
         for(Edge i: edges){
-            if (i.getStart().getEntity().equals(origen) && i.getEnd().getEntity().equals(destino)){
+            if (i.getStartId() == getNode(origen).getId() && i.getEndId() == getNode(destino).getId()) {
+                // i.getStart().getEntity().equals(origen) && i.getEnd().getEntity().equals(destino)
                 i.addWeight(peso);
                 return;
             }
         }
-        Node caller = null;
-        Node receiver = null;
+        int caller = 0;
+        int receiver = 0;
         for(Node i: nodes){
             if (i.getEntity().equals(origen)){
-                caller = i;
+                caller = i.getId();
             }
             if (i.getEntity().equals(destino)){
-                receiver = i;
+                receiver = i.getId();
             }
         }
-        edges.add(new Edge(numero, peso, caller, receiver));
+        edges.add(new Edge(id, peso, caller, receiver));
     }
 
     public void adyacencyList(){
         for(Node i: nodes){
             ArrayList<String> adyList = new ArrayList<String>();
             for(Edge j: edges){
-                if (j.getStart() == i){
-                    adyList.add("|"+ j.getEnd().getEntity() + "|" + j.getWeight() + "|");
+                if (getNode(j.getStartId()) == i){
+                    adyList.add("|"+ getNode(j.getEndId()).getEntity() + "|" + j.getWeight() + "|");
                 }
             }
             System.out.println(i.getEntity() + "->" + adyList.toString());
@@ -65,10 +84,10 @@ public class Graph {
             String current = queue.poll();
             visited.add(current);
             for (Edge i: edges){
-                if (i.getStart().getEntity().equals(current)){
-                    if (!visited.contains(i.getEnd().getEntity())){
-                        if(!queue.contains(i.getEnd().getEntity())){
-                            queue.add(i.getEnd().getEntity());
+                if (getNode(i.getStartId()).getEntity().equals(current)){
+                    if (!visited.contains(getNode(i.getEndId()).getEntity())){
+                        if(!queue.contains(getNode(i.getEndId()).getEntity())){
+                            queue.add(getNode(i.getEndId()).getEntity());
                         }
 
                     }

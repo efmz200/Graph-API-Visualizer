@@ -2,19 +2,16 @@ package Logic;
 
 public class Edge {
     private int id;
-    private Node start;
-    private Node end;
+    private int startId;
+    private int endId;
     private int weight;
-    public Edge(int numero, int peso, Node origen, Node destino){
-        this.start = origen;
-        this.end = destino;
+    public Edge(int numero, int peso, int origen, int destino){
+        this.startId = origen;
+        this.endId = destino;
         this.weight = peso;
         this.id = numero;
     }
 
-    public boolean isPath(Node origen, Node destino){
-        return (origen == this.start && destino == this.end);
-    }
 
     public void addWeight(int peso){
         this.weight = this.weight + peso;
@@ -28,20 +25,20 @@ public class Edge {
         this.id = id;
     }
 
-    public Node getStart() {
-        return start;
+    public int getStartId() {
+        return startId;
     }
 
-    public void setStart(Node start) {
-        this.start = start;
+    public void setStartId(int startId) {
+        this.startId = startId;
     }
 
-    public Node getEnd() {
-        return end;
+    public int getEndId() {
+        return endId;
     }
 
-    public void setEnd(Node end) {
-        this.end = end;
+    public void setEndId(int endId) {
+        this.endId = endId;
     }
 
     public int getWeight() {
