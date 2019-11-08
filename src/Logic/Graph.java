@@ -6,20 +6,50 @@ public class Graph {
     private int id;
     private ArrayList<Node> nodes;
     private ArrayList<Edge> edges;
+    private int nodeCounter;
+    private int edgeCounter;
     public Graph(int numero){
         this.id = numero;
         this.nodes = new ArrayList<Node>();
         this.edges = new ArrayList<Edge>();
+        nodeCounter = 0;
+        edgeCounter = 0;
     }
 
+    public void addNode(String telefono){
+        if (containsNode(telefono)) {
+            return;
+        } else {
+            addNode(nodeCounter, telefono);
+            nodeCounter++;
+        }
+    }
 
-    public void addNode(int numero, String telefono){
+    private void addNode(int numero, String telefono){
         for (Node i: nodes){
             if (i.getEntity().equals(telefono)){
                 return;
             }
         }
         nodes.add(new Node(numero, telefono));
+    }
+
+    public boolean containsNode(String telefono){
+        for(Node i: nodes){
+            if (i.getEntity().equals(telefono)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsEdge(String source, String target){
+        for(Edge i: edges){
+            if (i.getStartId() == getNode(source).getId() && i.getEndId() == getNode(target).getId()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public Node getNode(String telefono){
@@ -85,7 +115,16 @@ public class Graph {
         edges.remove(target);
     }
 
-    public void addEdge(String origen, String destino, int peso, int id){
+    public void addEdge(String origen, String destino, int weight){
+        if(this.containsEdge(origen, destino)){
+            addEdge(origen, destino, weight,edgeCounter);
+        } else{
+            addEdge(origen,destino,weight,edgeCounter);
+            edgeCounter++;
+        }
+    }
+
+    private void addEdge(String origen, String destino, int peso, int id){
         for(Edge i: edges){
             if (i.getStartId() == getNode(origen).getId() && i.getEndId() == getNode(destino).getId()) {
                 // i.getStart().getEntity().equals(origen) && i.getEnd().getEntity().equals(destino)

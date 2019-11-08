@@ -5,6 +5,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class test {
     public static ObjectMapper mapper = new ObjectMapper();
     public static void main(String[] args) throws Exception{
+        CSVreader reader = new CSVreader();
+        Graph g1 = reader.readCSVFile("src/Resources/Grafo1.csv");
+        Graph g2 = reader.readCSVFile("src/Resources/Grafo2.csv");
+
+        System.out.println("-------------------Grafo 1------------------------");
+
+        g1.breadthFirstTraversal();
+        g1.adyacencyList();
+
+        System.out.println("--------------------------------------------------");
+
+        System.out.println("-------------------Grafo 2------------------------");
+
+        g2.breadthFirstTraversal();
+        g2.adyacencyList();
+
+        System.out.println("--------------------------------------------------");
+
+        /*
         Graph G = new Graph(1);
         String numero1  = "2551";
         String numero2 = "7202";
@@ -13,21 +32,21 @@ public class test {
         String numero5 = "2288";
         String numero6 = "0272";
 
-        G.addNode(1,numero1);
-        G.addNode(2,numero2);
-        G.addNode(3,numero3);
-        G.addNode(4,numero4);
-        G.addNode(5,numero5);
-        G.addNode(6,numero6);
+        G.addNode(numero1);
+        G.addNode(numero2);
+        G.addNode(numero3);
+        G.addNode(numero4);
+        G.addNode(numero5);
+        G.addNode(numero6);
 
-        G.addEdge(numero1,numero2,1,1);
-        G.addEdge(numero2,numero3,2,2);
-        G.addEdge(numero3,numero2,3,3);
-        G.addEdge(numero2,numero4,4,4);
-        G.addEdge(numero4,numero5,5,5);
-        G.addEdge(numero3,numero6,6,6);
-        G.addEdge(numero5,numero6,7,7);
-        G.addEdge(numero3,numero4,8,8);
+        G.addEdge(numero1,numero2,1);
+        G.addEdge(numero2,numero3,2);
+        G.addEdge(numero3,numero2,3);
+        G.addEdge(numero2,numero4,4);
+        G.addEdge(numero4,numero5,5);
+        G.addEdge(numero3,numero6,6);
+        G.addEdge(numero5,numero6,7);
+        G.addEdge(numero3,numero4,8);
 
         //
         //           1
@@ -49,7 +68,7 @@ public class test {
 
         // G.breadthFirstTraversal();
         // System.out.println('\n' + '\n');
-        G.adyacencyList();*/
+        G.adyacencyList();
 
        Dijkstra algoritmo = new Dijkstra(G);
        algoritmo.execute(1);
@@ -63,5 +82,6 @@ public class test {
        path = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoritmo.getPath(6));
        System.out.println(path);
 
+       */
     }
 }
