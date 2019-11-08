@@ -28,6 +28,20 @@ public class test {
         G.addEdge(numero3,numero6,6,6);
         G.addEdge(numero5,numero6,7,7);
         G.addEdge(numero3,numero4,8,8);
+
+        //
+        //           1
+        //  "2551" ---->_   "7202"        _  "2288"
+        //              /|   /            /|     |
+        //          3 /   / 2           / 5      | 7
+        //          /   /             /          |
+        //        /  |/_     8       /           V
+        //      "1073" -------- > "8822"      "0272"
+        //         \____________________________/
+        //                  6
+        //
+        //  Representación del grafo formado anteriormente...
+        //
        /* System.out.println("");
         G.adyacencyList();
         System.out.println("");
