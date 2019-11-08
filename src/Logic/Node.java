@@ -4,6 +4,7 @@ public class Node {
     private int id;
     private int inDegree;
     private int outDegree;
+    private int avgDegree;
     private String entity;
 
     public Node(int numero, String telefono){
@@ -13,6 +14,10 @@ public class Node {
         this.outDegree = 0;
     }
 
+    public int getAvgDegree(){
+        this.avgDegree = (this.inDegree + this.outDegree) / 2;
+        return avgDegree;
+    }
     public void addIn(){
         inDegree++;
     }

@@ -9,19 +9,23 @@ public class test {
         Graph g1 = reader.readCSVFile("src/Resources/Grafo1.csv");
         Graph g2 = reader.readCSVFile("src/Resources/Grafo2.csv");
 
-        System.out.println("-------------------Grafo 1------------------------");
-
-        g1.breadthFirstTraversal();
-        g1.adyacencyList();
-
-        System.out.println("--------------------------------------------------");
-
         System.out.println("-------------------Grafo 2------------------------");
 
-        g2.breadthFirstTraversal();
-        g2.adyacencyList();
+        // g1.breadthFirstTraversal();
+        // g1.adyacencyList();
+        String grafo1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(g2.sortedNodes("ASC"));
+        System.out.println(grafo1);
 
         System.out.println("--------------------------------------------------");
+
+        // System.out.println("-------------------Grafo 2------------------------");
+
+        // g2.breadthFirstTraversal();
+        // g2.adyacencyList();
+        // String grafo2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(g2);
+        // System.out.println(grafo2);
+
+        // System.out.println("--------------------------------------------------");
 
         /*
         Graph G = new Graph(1);

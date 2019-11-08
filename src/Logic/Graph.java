@@ -1,5 +1,6 @@
 package Logic;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class Graph {
@@ -145,6 +146,25 @@ public class Graph {
             }
         }
         edges.add(new Edge(id, peso, caller, receiver));
+    }
+
+    public ArrayList<Node> sortedNodes(String sort){
+        ArrayList<Node> sortedNodes = new ArrayList<Node>();
+        sortedNodes.addAll(nodes);
+        int length = sortedNodes.size();
+        for(int i = 0; i < length; i++){
+            for (int j = 0; j < length-i-1; j++){
+                if(sortedNodes.get(j).getAvgDegree() > sortedNodes.get(j+1).getAvgDegree()){
+                    Node temp = sortedNodes.get(j);
+                    sortedNodes.set(j, sortedNodes.get(j+1));
+                    sortedNodes.set(j+1, temp);
+                }
+            }
+        }
+        if (sort.equals("DESC")){
+            Collections.reverse(sortedNodes);
+        }
+        return sortedNodes;
     }
 
     public void adyacencyList(){
