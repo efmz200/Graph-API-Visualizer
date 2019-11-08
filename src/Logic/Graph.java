@@ -40,6 +40,51 @@ public class Graph {
         return null;
     }
 
+    public void removeNode(int id){
+        Node target = null;
+        for(Node i: nodes){
+            if (i.getId() == id){
+                for(Edge j: edges){
+                    if (j.getStartId() == i.getId()){
+                        for(Node node: nodes){
+                            if (node.getId() == j.getEndId()){
+                                node.subtractIn();
+                            }
+                        }
+                        removeEdge(j.getId());
+                    } else if( j.getEndId() == i.getId()){
+                        for(Node node: nodes){
+                            if(node.getId() == j.getStartId()){
+                                node.subtractOut();;
+                            }
+                        }
+                        removeEdge(j.getId());
+                    }
+                }
+                target = i;
+            }
+        }
+        nodes.remove(target);
+
+    }
+
+    public void removeEdge(int id){
+        Edge target = null;
+        for (Edge i: edges){
+            if (i.getId() == id){
+                for(Node j: nodes){
+                    if(j.getId() == i.getStartId()){
+                        j.subtractOut();
+                    } else if (j.getId() == i.getEndId()){
+                        j.subtractIn();
+                    }
+                }
+                target = i;
+            }
+        }
+        edges.remove(target);
+    }
+
     public void addEdge(String origen, String destino, int peso, int id){
         for(Edge i: edges){
             if (i.getStartId() == getNode(origen).getId() && i.getEndId() == getNode(destino).getId()) {
@@ -52,9 +97,11 @@ public class Graph {
         int receiver = 0;
         for(Node i: nodes){
             if (i.getEntity().equals(origen)){
+                i.addOut();
                 caller = i.getId();
             }
             if (i.getEntity().equals(destino)){
+                i.addIn();
                 receiver = i.getId();
             }
         }

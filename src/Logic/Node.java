@@ -17,8 +17,16 @@ public class Node {
         inDegree++;
     }
 
+    public void subtractIn(){
+        inDegree--;
+    }
+
     public void addOut(){
         outDegree++;
+    }
+
+    public void subtractOut(){
+        outDegree--;
     }
 
     public int getId() {

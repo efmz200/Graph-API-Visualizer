@@ -41,5 +41,13 @@ public class test {
        algoritmo.execute(1);
        String path = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoritmo.getPath(6));
        System.out.println(path);
+
+       G.removeEdge(6);
+
+       algoritmo = new Dijkstra(G);
+       algoritmo.execute(1);
+       path = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoritmo.getPath(6));
+       System.out.println(path);
+
     }
 }
