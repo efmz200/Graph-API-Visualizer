@@ -1,7 +1,10 @@
 package Logic;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class test {
-    public static void main(String[] args){
+    public static ObjectMapper mapper = new ObjectMapper();
+    public static void main(String[] args) throws Exception{
         Graph G = new Graph(1);
         String numero1  = "2551";
         String numero2 = "7202";
@@ -25,13 +28,18 @@ public class test {
         G.addEdge(numero3,numero6,6,6);
         G.addEdge(numero5,numero6,7,7);
         G.addEdge(numero3,numero4,8,8);
-        System.out.println("");
+       /* System.out.println("");
         G.adyacencyList();
         System.out.println("");
         G.addEdge(numero2,numero4,6,9);
 
         // G.breadthFirstTraversal();
         // System.out.println('\n' + '\n');
-        G.adyacencyList();
+        G.adyacencyList();*/
+
+       Dijkstra algoritmo = new Dijkstra(G);
+       algoritmo.execute(1);
+       String path = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoritmo.getPath(6));
+       System.out.println(path);
     }
 }
