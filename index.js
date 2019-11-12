@@ -22,7 +22,24 @@ app.post("/graphs",(req,res)=>{
 		res.status(500).send()
 
 	}
-	
+app.delete("/graphs",(req,res)=>{
+	//llamar a java para borrar los grafos?
+})	
+app.delete("/graphs/:id",(req,res)=>{
+	const parametro = req.params.id
+	//llamar a java para borrar los grafos con el id?
+	try{
+		//borra el grafo con el id en java
+		//llamar a java xD
+		rest.set("status",404) 
+		res.status(404).send()
+	}
+	catch(e){
+		rest.set("status",404) 
+		res.status(404).send()
+
+	}
+})	
 
 })
 app.get("/prueba/:par1",(req,res)=>{
