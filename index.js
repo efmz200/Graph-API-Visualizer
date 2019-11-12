@@ -39,6 +39,10 @@ app.delete("/graphs/:id",(req,res)=>{
 		res.status(404).send()
 
 	}
+})
+app.get("/graphs/:id/nodes",(req,res)=>{
+	const parametro = req.params.id
+	
 })	
 
 })
