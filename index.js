@@ -11,6 +11,7 @@ app.get("/prueba",(req,rest)=>{
 app.listen(port,() => {
 	console.log("App running")
 })
+3
 app.post("/graphs",(req,res)=>{
 	try{
 		//crear el grafo
@@ -22,30 +23,64 @@ app.post("/graphs",(req,res)=>{
 		res.status(500).send()
 
 	}
+})
+
 app.delete("/graphs",(req,res)=>{
 	//llamar a java para borrar los grafos?
-})	
-app.delete("/graphs/:id",(req,res)=>{
-	const parametro = req.params.id
+})
+
+app.delete("/graphs/:id".(req,res)=>{
+	const graphId = req.params.id
+	const grap_borrado = "aqui se llama a la funcion"
+	if (grap_borrado==null){
+		rest.set("status",404) 
+		res.status(404).send()
+	}
+	else if (grap_borrado!=null){
+		rest.set("status",200) 
+		res.status(200).send()
+	}
+
+})
+
+get.get("/graphs/:id/nodes",(req,res)=>{
+	const graphId = req.params.id
+	const list="lista de nodos traida de java"
+	rest.send(list)
+})
+
+app.delete("/graphs/:id/nodes/:id2",(req,res)=>{
+	const graphId = req.params.id
+	const nodoId = req.params.id2
+	const nodo= "nodo eliminado"
 	//llamar a java para borrar los grafos con el id?
-	try{
-		//borra el grafo con el id en java
-		//llamar a java xD
+	if (nodo==null){
 		rest.set("status",404) 
 		res.status(404).send()
 	}
-	catch(e){
-		rest.set("status",404) 
-		res.status(404).send()
-
+	else if (nodo!=null){
+		rest.set("status",200) 
+		res.status(200).send()
 	}
 })
-app.get("/graphs/:id/nodes",(req,res)=>{
-	const parametro = req.params.id
+
+app.get("/graphs/:id/edges",(req,res)=>{
+	const Id = req.params.id2
+	const arr= "array con las aristas"
+})
+
+app.post("/graphs/{id}/edges/",(req,res)=>{
+
+
 	
-})	
-
 })
+
+
+
+
+
+
+
 app.get("/prueba/:par1",(req,res)=>{
 	const parametro = req.params.par1
 	res.send(parametro)
