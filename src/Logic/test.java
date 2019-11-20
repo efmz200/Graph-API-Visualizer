@@ -1,9 +1,9 @@
 package Logic;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class test {
-    public static ObjectMapper mapper = new ObjectMapper();
+    /*public static ObjectMapper mapper = new ObjectMapper();
     public static void main(String[] args) throws Exception{
         CSVreader reader = new CSVreader();
         Graph g1 = reader.readCSVFile("src/Resources/Grafo1.csv");
@@ -86,6 +86,6 @@ public class test {
        path = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoritmo.getPath(6));
        System.out.println(path);
 
-       */
-    }
+
+    }*/
 }
