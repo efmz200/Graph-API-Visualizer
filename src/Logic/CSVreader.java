@@ -8,22 +8,27 @@ public class CSVreader {
     public CSVreader(){
     }
 
-    public static Graph readCSVFile(String filePath) throws Exception{
-        File file = new File(filePath);
-        String line;
-        Graph g = new Graph(graphCounter);
-        graphCounter++;
-        BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-        while((line = br.readLine()) != null){
-            String[] container = line.split(",");
-            String source = container[0];
-            String target = container[1];
-            String duration = container[2];
-            addToGraph(g, source, target, duration);
-        }
-        br.close();
+    public Graph readCSVFile(String filePath){
+        try {
+            File file = new File(filePath);
+            String line;
+            Graph g = new Graph(graphCounter);
+            graphCounter++;
+            BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+            while ((line = br.readLine()) != null) {
+                String[] container = line.split(",");
+                String source = container[0];
+                String target = container[1];
+                String duration = container[2];
+                addToGraph(g, source, target, duration);
+            }
+            br.close();
 
-        return g;
+            return g;
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
     }
 
     private static void addToGraph(Graph g, String source, String target, String duration){
