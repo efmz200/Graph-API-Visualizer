@@ -9,7 +9,7 @@ public class NodoL<T> {
         this.next = null;
     }
     /**
-     * Método que toma ek nodo que está siendo apuntado por el nodo actual
+     * Método que toma el nodo que está siendo apuntado por el nodo actual
      * @return el siguiente nodo
      */
     public NodoL<T> getNext() {

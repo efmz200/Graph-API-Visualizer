@@ -7,7 +7,6 @@ import java.io.*;
  */
 public class CSVreader {
     private static int graphCounter = 0;
-
     /**
      * Lee un archivo CSV y crea un grafo a partir de este
      * @param filePath Path hacia el archivo CSV
