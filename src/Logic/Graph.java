@@ -8,8 +8,8 @@ import java.util.LinkedList;
  */
 public class Graph {
     private int id;
-    private ArrayList<Node> nodes;
-    private ArrayList<Edge> edges;
+    private Node[] nodes;
+    private Edge[] edges;
     private int nodeCounter;
     private int edgeCounter;
 
@@ -19,8 +19,8 @@ public class Graph {
      */
     public Graph(int numero){
         this.id = numero;
-        this.nodes = new ArrayList<Node>();
-        this.edges = new ArrayList<Edge>();
+        this.nodes = new Node[10];
+        this.edges = new Edge[10];
         nodeCounter = 0;
         edgeCounter = 0;
     }
@@ -47,7 +47,61 @@ public class Graph {
         if (this.containsNode(telefono)) {
             return;
         } else {
-            nodes.add(new Node(numero, telefono));
+            if(arrayFull(this.nodes)){
+                this.increaseNodeArray();
+            }
+            this.addNode(new Node(numero, telefono));
+        }
+    }
+
+    /**
+     * Verifica si el array ingresado esta lleno
+     * @param array Array ingresado
+     * @return Retorna false si hay algún espacio vacío en el array, false en caso contrario
+     */
+    private boolean arrayFull(Object[] array){
+        for(int pos = 0; pos < array.length; pos++){
+            if(array[pos] == null){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Incrementa el tamaño del array de nodos del grafo
+     */
+    private void increaseNodeArray(){
+        int increasedSize = nodes.length + 5;
+        Node[] tempArray = new Node[increasedSize];
+        for(int pos = 0; pos < nodes.length; pos++){
+            tempArray[pos] = nodes[pos];
+        }
+        nodes = tempArray;
+    }
+
+    /**
+     * Incrementa el tamaño del array de aristas del grafo
+     */
+    private void increaseEdgeArray(){
+        int increasedSize = edges.length + 5;
+        Edge[] tempArray = new Edge[increasedSize];
+        for(int pos = 0; pos < edges.length; pos++){
+            tempArray[pos] = edges[pos];
+        }
+        edges = tempArray;
+    }
+
+    /**
+     * Agrega el nodo ingresado en el primer espacio vacío del array de nodos del grafo
+     * @param node Nodo ingresado
+     */
+    private void addNode(Node node){
+        for(int i = 0; i < nodes.length; i++){
+            if(nodes[i] == null){
+                nodes[i] = node;
+                return;
+            }
         }
     }
 
@@ -58,9 +112,12 @@ public class Graph {
      */
     public boolean containsNode(String telefono){
         for(Node i: nodes){
-            if (i.getEntity().equals(telefono)){
-                return true;
+            if(i != null){
+                if (i.getEntity().equals(telefono)){
+                    return true;
+                }
             }
+
         }
         return false;
     }
@@ -73,8 +130,10 @@ public class Graph {
      */
     public boolean containsEdge(String source, String target){
         for(Edge i: edges){
-            if (i.getStartId() == getNode(source).getId() && i.getEndId() == getNode(target).getId()){
-                return true;
+            if(i != null){
+                if (i.getStartId() == getNode(source).getId() && i.getEndId() == getNode(target).getId()){
+                    return true;
+                }
             }
         }
         return false;
@@ -137,8 +196,21 @@ public class Graph {
                 target = i;
             }
         }
-        nodes.remove(target);
+        this.removeNode(target);
 
+    }
+
+    /**
+     * Elimina el nodo ingresado del array de nodos del grafo
+     * @param target Nodo ingresado
+     */
+    private void removeNode(Node target){
+        for(int pos = 0; pos < nodes.length; pos++){
+            if(nodes[pos] == target){
+                nodes[pos] = null;
+                return;
+            }
+        }
     }
 
     /**
@@ -149,18 +221,33 @@ public class Graph {
     public void removeEdge(int id){
         Edge target = null;
         for (Edge i: edges){
-            if (i.getId() == id){
-                for(Node j: nodes){
-                    if(j.getId() == i.getStartId()){
-                        j.subtractOut();
-                    } else if (j.getId() == i.getEndId()){
-                        j.subtractIn();
+            if(i != null){
+                if (i.getId() == id){
+                    for(Node j: nodes){
+                        if(j.getId() == i.getStartId()){
+                            j.subtractOut();
+                        } else if (j.getId() == i.getEndId()){
+                            j.subtractIn();
+                        }
                     }
+                    target = i;
                 }
-                target = i;
             }
         }
-        edges.remove(target);
+        this.removeEdge(target);
+    }
+
+    /**
+     * Elimina la arista ingresada del array de aristas del grafo
+     * @param target Arista ingresada
+     */
+    private void removeEdge(Edge target){
+        for(int pos = 0; pos < edges.length; pos++){
+            if(edges[pos] == target){
+                edges[pos] = null;
+                return;
+            }
+        }
     }
 
     /**
@@ -188,25 +275,45 @@ public class Graph {
      */
     private void addEdge(String origen, String destino, int peso, int id){
         for(Edge i: edges){
-            if (i.getStartId() == getNode(origen).getId() && i.getEndId() == getNode(destino).getId()) {
-                // i.getStart().getEntity().equals(origen) && i.getEnd().getEntity().equals(destino)
-                i.addWeight(peso);
-                return;
+            if(i != null){
+                if (i.getStartId() == getNode(origen).getId() && i.getEndId() == getNode(destino).getId()) {
+                    i.addWeight(peso);
+                    return;
+                }
             }
         }
         int caller = 0;
         int receiver = 0;
         for(Node i: nodes){
-            if (i.getEntity().equals(origen)){
-                i.addOut();
-                caller = i.getId();
-            }
-            if (i.getEntity().equals(destino)){
-                i.addIn();
-                receiver = i.getId();
+            if(i != null){
+                if (i.getEntity().equals(origen)){
+                    i.addOut();
+                    caller = i.getId();
+                }
+                if (i.getEntity().equals(destino)){
+                    i.addIn();
+                    receiver = i.getId();
+                }
             }
         }
-        edges.add(new Edge(id, peso, caller, receiver));
+        if(this.arrayFull(edges)){
+            this.increaseEdgeArray();
+        }
+        this.addEdge(new Edge(id, peso, caller, receiver));
+    }
+
+    /**
+     * Agrega la arista ingresada a la primera posición vacía del array de aristas del grafo
+     * @param edge Arista ingresada
+     */
+    private void addEdge(Edge edge){
+        for(int pos = 0; pos < edges.length; pos++){
+            if(edges[pos] == null){
+                edges[pos] = edge;
+                return;
+            }
+        }
+
     }
 
     /**
@@ -215,23 +322,38 @@ public class Graph {
      * @param sort Parámetro por el cuál ordenar los nodos
      * @return Lista con los nodos ordenados
      */
-    public ArrayList<Node> sortedNodes(String sort){
-        ArrayList<Node> sortedNodes = new ArrayList<Node>();
-        sortedNodes.addAll(nodes);
-        int length = sortedNodes.size();
+    public Node[] sortedNodes(String sort){
+        Node[] sortedNodes = nodes;
+        int length = sortedNodes.length;
         for(int i = 0; i < length; i++){
             for (int j = 0; j < length-i-1; j++){
-                if(sortedNodes.get(j).getAvgDegree() > sortedNodes.get(j+1).getAvgDegree()){
-                    Node temp = sortedNodes.get(j);
-                    sortedNodes.set(j, sortedNodes.get(j+1));
-                    sortedNodes.set(j+1, temp);
+                if(sortedNodes[j] != null && sortedNodes[j+1] != null){
+                    if(sortedNodes[j].getAvgDegree() > sortedNodes[j+1].getAvgDegree()){
+                        Node temp = sortedNodes[j];
+                        sortedNodes[j] = sortedNodes[j+1];
+                        sortedNodes[j+1] = temp;
+                    }
                 }
             }
         }
         if (sort.equals("DESC")){
-            Collections.reverse(sortedNodes);
+            sortedNodes = this.reverse(sortedNodes);
         }
         return sortedNodes;
+    }
+
+    /**
+     * Invierte el array ingresado
+     * @param array Array ingresado
+     * @return Array invertido
+     */
+    private Node[] reverse(Node[] array){
+        Node[] reversedArray = new Node[array.length];
+        int newPos = 0;
+        for(int pos = array.length-1; pos > 0; pos--){
+            reversedArray[newPos] = array[pos];
+        }
+        return reversedArray;
     }
 
     /**
@@ -239,43 +361,18 @@ public class Graph {
      */
     public void adyacencyList(){
         for(Node i: nodes){
-            ArrayList<String> adyList = new ArrayList<String>();
-            for(Edge j: edges){
-                if (getNode(j.getStartId()) == i){
-                    adyList.add("|"+ getNode(j.getEndId()).getEntity() + "|" + j.getWeight() + "|");
-                }
-            }
-            System.out.println(i.getEntity() + "->" + adyList.toString());
-        }
-    }
-
-    /**
-     * Recorre el grafo mediante el método Breadth-First, e imprime cada paso.
-     */
-    public void breadthFirstTraversal(){
-        ArrayList<String> visited = new ArrayList<String>();
-        LinkedList<String> queue = new LinkedList<String>();
-        while(visited.size() != nodes.size()){
-            if (visited.size() == 0){
-                queue.add(nodes.get(0).getEntity());
-            }
-            System.out.println("Queue: " + queue.toString() + " ; Visited: " + visited.toString());
-            String current = queue.poll();
-            visited.add(current);
-            for (Edge i: edges){
-                if (getNode(i.getStartId()).getEntity().equals(current)){
-                    if (!visited.contains(getNode(i.getEndId()).getEntity())){
-                        if(!queue.contains(getNode(i.getEndId()).getEntity())){
-                            queue.add(getNode(i.getEndId()).getEntity());
+            if(i !=null){
+                ArrayList<String> adyList = new ArrayList<String>();
+                for(Edge j: edges){
+                    if(j != null){
+                        if (getNode(j.getStartId()) == i){
+                            adyList.add("|"+ getNode(j.getEndId()).getEntity() + "|" + j.getWeight() + "|");
                         }
-
                     }
                 }
+                System.out.println(i.getEntity() + "->" + adyList.toString());
             }
-
         }
-        System.out.println("Queue: " + queue.toString() + " ; Visited: " + visited.toString());
-
     }
 
     /**
@@ -298,7 +395,7 @@ public class Graph {
      * Retorna el array de nodos del grafo
      * @return Array de nodos del grafo
      */
-    public ArrayList<Node> getNodes() {
+    public Node[] getNodes() {
         return nodes;
     }
 
@@ -306,7 +403,7 @@ public class Graph {
      * Establece el array de nodos del grafo
      * @param nodes Array de nodos del grafo
      */
-    public void setNodes(ArrayList<Node> nodes) {
+    public void setNodes(Node[] nodes) {
         this.nodes = nodes;
     }
 
@@ -314,7 +411,7 @@ public class Graph {
      * Retorna el array de aristas del grafo
      * @return Array de aristas del grafo
      */
-    public ArrayList<Edge> getEdges() {
+    public Edge[] getEdges() {
         return edges;
     }
 
@@ -322,7 +419,7 @@ public class Graph {
      * Establece el array de aristas del grafo
      * @param edges Array de aristas del grafo
      */
-    public void setEdges(ArrayList<Edge> edges) {
+    public void setEdges(Edge[] edges) {
         this.edges = edges;
     }
 }

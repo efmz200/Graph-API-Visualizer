@@ -13,8 +13,8 @@ import java.util.Set;
  */
 public class Dijkstra {
     private Graph g;
-    private ArrayList<Node> nodes;
-    private ArrayList<Edge> edges;
+    private Node[] nodes;
+    private Edge[] edges;
     private Set<Node> settledNodes;
     private Set<Node> unsettledNodes;
     private Map<Node, Node> predecessors;

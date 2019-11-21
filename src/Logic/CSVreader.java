@@ -7,29 +7,33 @@ import java.io.*;
  */
 public class CSVreader {
     private static int graphCounter = 0;
-
     /**
      * Lee un archivo CSV y crea un grafo a partir de este
      * @param filePath Path hacia el archivo CSV
      * @return Grafo creado a partir del archivo CSV
      * @throws Exception
      */
-    public static Graph readCSVFile(String filePath) throws Exception{
-        File file = new File(filePath);
-        String line;
-        Graph g = new Graph(graphCounter);
-        graphCounter++;
-        BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-        while((line = br.readLine()) != null){
-            String[] container = line.split(",");
-            String source = container[0];
-            String target = container[1];
-            String duration = container[2];
-            addToGraph(g, source, target, duration);
-        }
-        br.close();
+    public Graph readCSVFile(String filePath){
+        try {
+            File file = new File(filePath);
+            String line;
+            Graph g = new Graph(graphCounter);
+            graphCounter++;
+            BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+            while ((line = br.readLine()) != null) {
+                String[] container = line.split(",");
+                String source = container[0];
+                String target = container[1];
+                String duration = container[2];
+                addToGraph(g, source, target, duration);
+            }
+            br.close();
+            return g;
 
-        return g;
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
     }
 
     /**
