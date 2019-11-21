@@ -16,8 +16,8 @@ public class Graph {
      */
     public Graph(int numero){
         this.id = numero;
-        this.nodes = new Node[10];
-        this.edges = new Edge[10];
+        this.nodes = new Node[1];
+        this.edges = new Edge[1];
         nodeCounter = 0;
         edgeCounter = 0;
     }
@@ -69,7 +69,7 @@ public class Graph {
      * Incrementa el tamaño del array de nodos del grafo
      */
     private void increaseNodeArray(){
-        int increasedSize = nodes.length + 5;
+        int increasedSize = nodes.length + 1;
         Node[] tempArray = new Node[increasedSize];
         for(int pos = 0; pos < nodes.length; pos++){
             tempArray[pos] = nodes[pos];
@@ -78,15 +78,49 @@ public class Graph {
     }
 
     /**
+     * Disminuye el tamaño del array de nodos del grafo
+     */
+    private void decreaseNodeArray(){
+        Lista<Node> arrayToList = new Lista<Node>();
+        for(int pos = 0; pos < nodes.length; pos++){
+            if(nodes[pos] != null){
+                arrayToList.add(nodes[pos]);
+            }
+        }
+        Node[] listToArray = new Node[arrayToList.getLargo()];
+        for(int pos = 0; pos < arrayToList.getLargo(); pos++){
+            listToArray[pos] = (Node) arrayToList.buscar(pos).getDato();
+        }
+        nodes = listToArray;
+    }
+
+    /**
      * Incrementa el tamaño del array de aristas del grafo
      */
     private void increaseEdgeArray(){
-        int increasedSize = edges.length + 5;
+        int increasedSize = edges.length + 1;
         Edge[] tempArray = new Edge[increasedSize];
         for(int pos = 0; pos < edges.length; pos++){
             tempArray[pos] = edges[pos];
         }
         edges = tempArray;
+    }
+
+    /**
+     * Disminuye el tamaño del array de aristas del grafo
+     */
+    private void decreaseEdgeArray(){
+        Lista<Edge> arrayToList = new Lista<Edge>();
+        for(int pos = 0; pos < edges.length; pos++){
+            if(edges[pos] != null){
+                arrayToList.add(edges[pos]);
+            }
+        }
+        Edge[] listToArray = new Edge[arrayToList.getLargo()];
+        for(int pos = 0; pos < arrayToList.getLargo(); pos++){
+            listToArray[pos] = (Edge) arrayToList.buscar(pos).getDato();
+        }
+        edges = listToArray;
     }
 
     /**
@@ -194,6 +228,7 @@ public class Graph {
             }
         }
         this.removeNode(target);
+        decreaseNodeArray();
 
     }
 
@@ -232,6 +267,7 @@ public class Graph {
             }
         }
         this.removeEdge(target);
+        decreaseEdgeArray();
     }
 
     /**
