@@ -1,7 +1,4 @@
 package Logic;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 
 /**
  * Esta clase corresponde a una implementación de un grafo dirigido.
@@ -354,25 +351,6 @@ public class Graph {
             reversedArray[newPos] = array[pos];
         }
         return reversedArray;
-    }
-
-    /**
-     * Imprime el grafo en consola como una lista de adyacencia
-     */
-    public void adyacencyList(){
-        for(Node i: nodes){
-            if(i !=null){
-                ArrayList<String> adyList = new ArrayList<String>();
-                for(Edge j: edges){
-                    if(j != null){
-                        if (getNode(j.getStartId()) == i){
-                            adyList.add("|"+ getNode(j.getEndId()).getEntity() + "|" + j.getWeight() + "|");
-                        }
-                    }
-                }
-                System.out.println(i.getEntity() + "->" + adyList.toString());
-            }
-        }
     }
 
     /**
