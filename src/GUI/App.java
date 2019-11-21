@@ -100,6 +100,9 @@ public class App {
         grafo.getModel().endUpdate();
     }
 
+    /**
+     * Metodo encargado de tomar el archivo seleccionado y enviarlo a leer.
+     */
     private void chooser(){
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter("CSV filter", "csv"));
@@ -107,8 +110,14 @@ public class App {
         File archivo = chooser.getSelectedFile();
         CSVreader csVreader = new CSVreader();
         listaGrafos.add(csVreader.readCSVFile(archivo.getAbsolutePath()));
-        System.out.println(archivo.getPath());
-        System.out.println(listaGrafos.getLargo());
+    }
+
+    /**
+     * Metodo encargado de mostrar gráficamente un grafo.
+     * @param grafo grafo que se desea representar.
+     */
+    private void dibujarGrafo(Graph grafo){
+
     }
 
     public static void main(String[] args) {
