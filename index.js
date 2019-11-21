@@ -11,7 +11,7 @@ app.get("/prueba",(req,rest)=>{
 app.listen(port,() => {
 	console.log("App running")
 })
-3
+
 app.post("/graphs",(req,res)=>{
 	try{
 		//crear el grafo
@@ -69,13 +69,45 @@ app.get("/graphs/:id/edges",(req,res)=>{
 	const arr= "array con las aristas"
 })
 
-app.post("/graphs/{id}/edges/",(req,res)=>{
-
-
+app.put("/graphs/:id/edges/:id2",(req,res)=>{
+	const graphId = req.params.id
+	const edgeId = req.params.id2
 	
 })
 
+app.delete("/graphs/:id/edges/:id2",(req,res)=>{
+	const graphId = req.params.id
+	const edgeId = req.params.id2
+	const estatus="llamar a java a eliminar"
+	if (estatus=nul){
+		res.send(404)
+	}
+	else{
+		res.send(200)
+	}
+})
 
+
+app.get("/graph/{id}/dijkstra"),(req,res)=>{
+	const nodo_i=req.query.startNode
+    const nodo_f=req.query.endNode
+    if nodo_i == null or nodo_f== null{
+    	res.send("debe ingresar los dos nodos")
+    }
+    const array="llamar al dijkstra con los nodos"
+    // este deberia de retornar el array con el dijkstra
+    const newObject={
+    	"valor":"array_len","arr":array
+    }
+    if (array==null){
+    	rest.set("status",400) 
+		res.status(400).send()
+    }
+    else{
+    	res.status(200).send()
+    	res.send(rest.set("status",200,newObject)
+    }
+})	
 
 
 
