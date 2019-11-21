@@ -16,7 +16,6 @@ import java.util.HashMap;
 public class App {
     private JPanel panel1;
     private HashMap hash;
-    private JLabel scroll;
     private JPanel draw;
     private JMenuItem cargar;
     private JMenuItem addV;
@@ -27,11 +26,15 @@ public class App {
     private JMenuItem get;
     private JMenuItem post;
     private JMenuItem put;
+    private mxGraph actualGraph;
+    private JPanel scroll;
     private Lista<Graph> listaGrafos;
     private mxGraphComponent component;
+    private Lista<mxGraph>listaGrafica;
 
 
     public App() {
+        listaGrafica = new Lista<>();
         hash = new HashMap();
         mxGraph graph = new mxGraph();
         listaGrafos = new Lista<>();
@@ -47,6 +50,7 @@ public class App {
         addV.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                addVertice();
                 System.out.println("Nuevo vertice");
             }
         });
@@ -94,6 +98,7 @@ public class App {
             }
         });
         draw.add(component);
+        agregarG();
     }
 
     /**
@@ -115,22 +120,51 @@ public class App {
      */
     private void dibujarGrafo(Graph graf){
         mxGraph grafo = new mxGraph();
+        actualGraph = grafo;
         component.setGraph(grafo);
-        component.setPreferredSize(new Dimension(640,610));
         draw.add(component);
         Edge[] ed  = graf.getEdges();
         Node [] nodes = graf.getNodes();
         Object parent = grafo.getDefaultParent();
         grafo.getModel().beginUpdate();
         for(Node w: nodes){
-            grafo.insertVertex(parent,null,w.getEntity(),30,80,100,50 );
+            Object v = grafo.insertVertex(parent,null,w.getEntity(),(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50 );
+            hash.put(w.getEntity(),v);
         }
-        /*for(Edge e: ed){
+        for(Edge e: ed){
             Object v1 = hash.get(e.getsEntity());
             Object v2 = hash.get(e.geteEntity());
             grafo.insertEdge(parent,null,e.getWeight(),v1,v2);
-        }*/
+        }
         grafo.getModel().endUpdate();
+        listaGrafica.add(grafo);
+    }
+
+    private void agregarG(){
+        JLabel label = new JLabel("hidj");
+        label.setBounds(10,60,50,50);
+
+
+    }
+    private void addVertice(){
+        //int id = Integer.parseInt(JOptionPane.showInputDialog("Ingrese un id para el vertice"));
+        String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono");
+        int pos = listaGrafica.getPos(actualGraph);
+        Graph grafo = (Graph) (listaGrafos.buscar(pos).getDato());
+        grafo.addNode(numero);
+        Object parent = actualGraph.getDefaultParent();
+        actualGraph.insertVertex(parent,null,numero,(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50);
+    }
+    private void eliminarVertice(){
+        
+    }
+
+    /**
+     * Metodo que muestra el grafo seleccionado en pantalla.
+     * @param graph grafo que se desea mostrar.
+     */
+    private void mostrarGrafo(mxGraph graph){
+        component.setGraph(graph);
     }
 
     public static void main(String[] args) {
