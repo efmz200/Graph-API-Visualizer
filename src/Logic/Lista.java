@@ -1,12 +1,7 @@
 package Logic;
 
-/**
- * Clase encargada de guardar un conjunto de nodos
- * @param <T> parámetro que define el tipo de dato que guardará la lista
- * @author sebastián Moya
- */
 public class Lista<T> {
-    private Nodo head;
+    private NodoL<T> head;
     private int largo;
 
     /**
@@ -23,14 +18,14 @@ public class Lista<T> {
      */
     public void add(T dato){
         if(head == null){
-            this.head = new Nodo(dato);
+            this.head = new NodoL<T>(dato);
             largo ++;
         }else{
-            Nodo temp = this.head;
+            NodoL temp = this.head;
             while(temp.getNext() != null){
                 temp = temp.getNext();
             }
-            temp.setNext(new Nodo(dato));
+            temp.setNext(new NodoL<T>(dato));
             largo ++;
         }
     }
@@ -42,7 +37,7 @@ public class Lista<T> {
      */
     public void modificarNodo(int pos,T dato){
         int indice =0;
-        Nodo temp = this.head;
+        NodoL temp = this.head;
         while(indice != pos){
             temp = temp.getNext();
             indice++;
@@ -56,7 +51,7 @@ public class Lista<T> {
      * @return un boolean con el valor de verdad.
      */
     public boolean verificar(Object valor){
-        Nodo temp = this.head;
+        NodoL temp = this.head;
         boolean estado = false;
         while (temp != null){
             if (temp.getDato().equals(valor)){
@@ -69,7 +64,7 @@ public class Lista<T> {
         return estado;
     }
     public int getPos(Object valor){
-        Nodo temp = this.head;
+        NodoL temp = this.head;
         int indice = 0;
         while (temp != null){
             if (temp.getDato().equals(valor)){
@@ -86,7 +81,7 @@ public class Lista<T> {
      * @param posicion recibe un dato de tipo entero que es la posición por la cual se busca.
      * @return retorna a un null si la posición es inválida o al método buscarAux si es válido.
      */
-    public Nodo buscar(int posicion){
+    public NodoL buscar(int posicion){
         if(posicion > largo-1){
             return null;
         }else{
@@ -99,9 +94,9 @@ public class Lista<T> {
      * @param posicion Dato de tipo entero, es la posición que se desea buscar
      * @return retorna el nodo en la posición dada.
      */
-    private Nodo buscarAux(int posicion){
+    private NodoL buscarAux(int posicion){
         int indice =0;
-        Nodo temp = this.head;
+        NodoL temp = this.head;
         while(indice != posicion ){
             temp = temp.getNext();
             indice++;
@@ -126,8 +121,8 @@ public class Lista<T> {
             this.head = this.head.getNext();
             largo --;
         }else {
-            Nodo prev = this.head;
-            Nodo temp = prev.getNext();
+            NodoL prev = this.head;
+            NodoL temp = prev.getNext();
             int indice = 1;
             while (indice != posicion) {
                 temp = temp.getNext();
@@ -151,7 +146,7 @@ public class Lista<T> {
      * Método encargado de devolver el primer nodo de la lista
      * @return Atributo head
      */
-    public Nodo getHead() {
+    public NodoL getHead() {
         return head;
     }
 }
