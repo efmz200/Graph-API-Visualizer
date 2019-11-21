@@ -11,20 +11,19 @@ public class test {
 
         System.out.println("-------------------Grafo 1------------------------");
 
-        g1.adyacencyList();
         String grafo1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(g2.sortedNodes("ASC"));
         System.out.println(grafo1);
 
         System.out.println("--------------------------------------------------");
 
-        System.out.println("-------------------Grafo 2------------------------");
+       /* System.out.println("-------------------Grafo 2------------------------");
 
-        g2.adyacencyList();
         String grafo2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(g2);
         System.out.println(grafo2);
 
         System.out.println("--------------------------------------------------");
 
+        */
         /*
         Graph G = new Graph(1);
         String numero1  = "2551";

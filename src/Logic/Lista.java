@@ -1,7 +1,7 @@
 package Logic;
 
 public class Lista<T> {
-    private NodoL head;
+    private NodoL<T> head;
     private int largo;
 
     /**
@@ -18,14 +18,14 @@ public class Lista<T> {
      */
     public void add(T dato){
         if(head == null){
-            this.head = new NodoL(dato);
+            this.head = new NodoL<T>(dato);
             largo ++;
         }else{
             NodoL temp = this.head;
             while(temp.getNext() != null){
                 temp = temp.getNext();
             }
-            temp.setNext(new NodoL(dato));
+            temp.setNext(new NodoL<T>(dato));
             largo ++;
         }
     }
