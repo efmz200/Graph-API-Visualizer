@@ -3,6 +3,8 @@ package GUI;
 import Logic.*;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import sun.management.snmp.jvmmib.JvmRTBootClassPathEntryMBean;
+import sun.plugin2.message.Message;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -28,13 +30,12 @@ public class App {
     private JMenuItem put;
     private mxGraph actualGraph;
     private JPanel scroll;
-    private Lista<Graph> listaGrafos;
+    private Lista<GraphData> listaGrafos;
     private mxGraphComponent component;
-    private Lista<mxGraph>listaGrafica;
+    //private Lista<mxGraph>listaGrafica;
 
 
     public App() {
-        listaGrafica = new Lista<>();
         hash = new HashMap();
         mxGraph graph = new mxGraph();
         listaGrafos = new Lista<>();
@@ -57,6 +58,7 @@ public class App {
         deleteV.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                eliminarVertice();
                 System.out.println("Eliminé vértice");
 
             }
@@ -64,18 +66,21 @@ public class App {
         addA.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                addArista();
                 System.out.println("Añadí arista");
             }
         });
         deleteA.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                eliminarArista();
                 System.out.println("borré arista");
             }
         });
         Dijkstra.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                calcularDijkstra();
                 System.out.println("Dijkstra");
             }
         });
@@ -110,7 +115,6 @@ public class App {
         chooser.showOpenDialog(null);
         File archivo = chooser.getSelectedFile();
         CSVreader csVreader = new CSVreader();
-        listaGrafos.add(csVreader.readCSVFile(archivo.getAbsolutePath()));
         dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
     }
 
@@ -137,7 +141,9 @@ public class App {
             grafo.insertEdge(parent,null,e.getWeight(),v1,v2);
         }
         grafo.getModel().endUpdate();
-        listaGrafica.add(grafo);
+        HashMap map = hash; // puede ser un problema.
+        GraphData data = new GraphData(grafo,graf,map);
+        listaGrafos.add(data);
     }
 
     private void agregarG(){
@@ -146,17 +152,86 @@ public class App {
 
 
     }
+    private GraphData buscarData(){
+        NodoL temp = listaGrafos.getHead();
+        GraphData data = (GraphData)temp.getDato();
+        while (temp != null){
+            data = (GraphData)temp.getDato();
+            if (data.getGrafoG().equals(actualGraph)){
+                break;
+            }else{
+                temp = temp.getNext();
+            }
+        }
+        return data;
+    }
     private void addVertice(){
-        //int id = Integer.parseInt(JOptionPane.showInputDialog("Ingrese un id para el vertice"));
         String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono");
-        int pos = listaGrafica.getPos(actualGraph);
-        Graph grafo = (Graph) (listaGrafos.buscar(pos).getDato());
+        GraphData data = buscarData();
+        Graph grafo = data.getGrafo();
         grafo.addNode(numero);
         Object parent = actualGraph.getDefaultParent();
-        actualGraph.insertVertex(parent,null,numero,(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50);
+        actualGraph.getModel().beginUpdate();
+        Object v = actualGraph.insertVertex(parent,null,numero,(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50);
+        data.getHash().put(numero,v);
+        actualGraph.getModel().endUpdate();
     }
     private void eliminarVertice(){
-        
+        String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono que desea eliminar");
+        GraphData data = buscarData();
+        Graph grafo = data.getGrafo();
+        HashMap hash = data.getHash();
+        grafo.removeNode(grafo.getNode(numero).getId());
+        Object v = hash.get(numero);
+        actualGraph.getModel().remove(actualGraph.getEdges(v));
+        actualGraph.getModel().remove(v);
+        hash.remove(numero);
+    }
+    private void calcularDijkstra(){
+        String numero = JOptionPane.showInputDialog("introduzca el nodo inicial");
+        String numero2 = JOptionPane.showInputDialog("introduzca el nodo final");
+        GraphData data = buscarData();
+        Graph grafo = data.getGrafo();
+        Node v1 = grafo.getNode(numero);
+        Node v2 = grafo.getNode(numero2);
+        Dijkstra di = new Dijkstra(grafo);
+        di.execute(v1.getId());
+        Path path = di.getPath(v2.getId());
+        String camino = "[";
+        Node[] n = path.getPath();
+        for (Node i: n){
+            camino += "," + " " + i.getEntity();
+        }
+        camino += "]";
+        JOptionPane.showMessageDialog(null,"Ruta " + camino+ "\n" + "Peso total: " + path.getTotalWeight());
+    }
+
+    private void eliminarArista(){
+        String numero1 = JOptionPane.showInputDialog("Introduzca el vertice que se tiene al inicio");
+        String numero2 = JOptionPane.showInputDialog("Introduzca el vertice de llegada");
+        GraphData data = buscarData();
+        Graph  grafo = data.getGrafo();
+        HashMap hashMap = data.getHash();
+        Object v1 =hashMap.get(numero1);
+        Object v2 = hashMap.get(numero2);
+        Object[] edeges =actualGraph.getEdgesBetween(v1,v2);
+        actualGraph.removeCells(edeges);
+    }
+
+    private void addArista(){
+        String numero1 = JOptionPane.showInputDialog("Vertice inicial");
+        String numero2 = JOptionPane.showInputDialog("Vertice Final");
+        String numero3 = JOptionPane.showInputDialog("Agregar Peso");
+        GraphData data = buscarData();
+        Graph  grafo = data.getGrafo();
+        HashMap hashMap = data.getHash();
+        Object v1 = hashMap.get(numero1);
+        Object v2 = hashMap.get(numero2);
+        actualGraph.getModel().beginUpdate();
+        actualGraph.insertEdge(actualGraph.getDefaultParent(),null,Integer.parseInt(numero3),v1,v2);
+        grafo.addEdge(numero1,numero2,Integer.parseInt(numero3));
+        actualGraph.getModel().endUpdate();
+
     }
 
     /**
