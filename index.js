@@ -29,7 +29,7 @@ app.delete("/graphs",(req,res)=>{
 	//llamar a java para borrar los grafos?
 })
 
-app.delete("/graphs/:id".(req,res)=>{
+app.delete("/graphs/:id",(req,res)=>{
 	const graphId = req.params.id
 	const grap_borrado = "aqui se llama a la funcion"
 	if (grap_borrado==null){
@@ -43,7 +43,7 @@ app.delete("/graphs/:id".(req,res)=>{
 
 })
 
-get.get("/graphs/:id/nodes",(req,res)=>{
+app.get("/graphs/:id/nodes",(req,res)=>{
 	const graphId = req.params.id
 	const list="lista de nodos traida de java"
 	rest.send(list)
@@ -88,10 +88,10 @@ app.delete("/graphs/:id/edges/:id2",(req,res)=>{
 })
 
 
-app.get("/graph/{id}/dijkstra"),(req,res)=>{
+app.get("/graph/{id}/dijkstra",(req,res)=>{
 	const nodo_i=req.query.startNode
     const nodo_f=req.query.endNode
-    if nodo_i == null or nodo_f== null{
+    if (nodo_i == null || nodo_f== null){
     	res.send("debe ingresar los dos nodos")
     }
     const array="llamar al dijkstra con los nodos"
@@ -105,9 +105,9 @@ app.get("/graph/{id}/dijkstra"),(req,res)=>{
     }
     else{
     	res.status(200).send()
-    	res.send(rest.set("status",200,newObject)
+    	res.send(rest.set("status",200))
     }
-})	
+})
 
 
 
