@@ -8,6 +8,8 @@ public class Edge {
     private int startId;
     private int endId;
     private int weight;
+    private String sEntity;
+    private String eEntity;
 
     /**
      * Método constructor de la arista
@@ -16,7 +18,9 @@ public class Edge {
      * @param origen ID del nodo origen
      * @param destino ID del nodo destino
      */
-    public Edge(int numero, int peso, int origen, int destino){
+    public Edge(int numero, int peso, int origen, int destino,String sEntity,String eEntity){
+        this.sEntity =sEntity;
+        this.eEntity =eEntity;
         this.startId = origen;
         this.endId = destino;
         this.weight = peso;
@@ -93,5 +97,13 @@ public class Edge {
      */
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public String getsEntity() {
+        return sEntity;
+    }
+
+    public String geteEntity() {
+        return eEntity;
     }
 }

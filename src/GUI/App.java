@@ -1,8 +1,6 @@
 package GUI;
 
-import Logic.CSVreader;
-import Logic.Graph;
-import Logic.Lista;
+import Logic.*;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
@@ -12,10 +10,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashMap;
 
 
 public class App {
     private JPanel panel1;
+    private HashMap hash;
     private JLabel scroll;
     private JPanel draw;
     private JMenuItem cargar;
@@ -27,15 +27,16 @@ public class App {
     private JMenuItem get;
     private JMenuItem post;
     private JMenuItem put;
-    private mxGraph grafo;
-    private mxGraphComponent component;
     private Lista<Graph> listaGrafos;
+    private mxGraphComponent component;
 
 
     public App() {
+        hash = new HashMap();
+        mxGraph graph = new mxGraph();
         listaGrafos = new Lista<>();
-        grafo = new mxGraph();
-        component = new mxGraphComponent(grafo);
+        component = new mxGraphComponent(graph);
+        component.setPreferredSize(new Dimension(640,610));
         cargar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -92,12 +93,7 @@ public class App {
                 System.out.println("put");
             }
         });
-        component.setPreferredSize(new Dimension(640,610));
         draw.add(component);
-        grafo.getModel().beginUpdate();
-        Object parent = grafo.getDefaultParent();
-        grafo.insertVertex(parent,null,"hola",30,80,100,50 );
-        grafo.getModel().endUpdate();
     }
 
     /**
@@ -110,14 +106,31 @@ public class App {
         File archivo = chooser.getSelectedFile();
         CSVreader csVreader = new CSVreader();
         listaGrafos.add(csVreader.readCSVFile(archivo.getAbsolutePath()));
+        dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
     }
 
     /**
      * Metodo encargado de mostrar gráficamente un grafo.
-     * @param grafo grafo que se desea representar.
+     * @param graf grafo que se desea representar.
      */
-    private void dibujarGrafo(Graph grafo){
-
+    private void dibujarGrafo(Graph graf){
+        mxGraph grafo = new mxGraph();
+        component.setGraph(grafo);
+        component.setPreferredSize(new Dimension(640,610));
+        draw.add(component);
+        Edge[] ed  = graf.getEdges();
+        Node [] nodes = graf.getNodes();
+        Object parent = grafo.getDefaultParent();
+        grafo.getModel().beginUpdate();
+        for(Node w: nodes){
+            grafo.insertVertex(parent,null,w.getEntity(),30,80,100,50 );
+        }
+        /*for(Edge e: ed){
+            Object v1 = hash.get(e.getsEntity());
+            Object v2 = hash.get(e.geteEntity());
+            grafo.insertEdge(parent,null,e.getWeight(),v1,v2);
+        }*/
+        grafo.getModel().endUpdate();
     }
 
     public static void main(String[] args) {
