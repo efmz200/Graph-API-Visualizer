@@ -183,7 +183,8 @@ public class App {
         HashMap hash = data.getHash();
         grafo.removeNode(grafo.getNode(numero).getId());
         Object v = hash.get(numero);
-        actualGraph.getModel().remove(actualGraph.getEdges(v));
+        Object[] o = actualGraph.getEdges(v);
+        actualGraph.removeCells(o);
         actualGraph.getModel().remove(v);
         hash.remove(numero);
     }
@@ -197,13 +198,17 @@ public class App {
         Dijkstra di = new Dijkstra(grafo);
         di.execute(v1.getId());
         Path path = di.getPath(v2.getId());
-        String camino = "[";
-        Node[] n = path.getPath();
-        for (Node i: n){
-            camino += "," + " " + i.getEntity();
+        if (path == null){
+            JOptionPane.showMessageDialog(null,"La ruta no existe");
+        }else {
+            String camino = "[";
+            Node[] n = path.getPath();
+            for (Node i : n) {
+                camino += "," + " " + i.getEntity();
+            }
+            camino += "]";
+            JOptionPane.showMessageDialog(null, "Ruta " + camino + "\n" + "Peso total: " + path.getTotalWeight());
         }
-        camino += "]";
-        JOptionPane.showMessageDialog(null,"Ruta " + camino+ "\n" + "Peso total: " + path.getTotalWeight());
     }
 
     private void eliminarArista(){
@@ -214,8 +219,22 @@ public class App {
         HashMap hashMap = data.getHash();
         Object v1 =hashMap.get(numero1);
         Object v2 = hashMap.get(numero2);
+        Object[] output = actualGraph.getOutgoingEdges(v1);
         Object[] edeges =actualGraph.getEdgesBetween(v1,v2);
-        actualGraph.removeCells(edeges);
+        Object[] ed = new Object[1];
+        for(Object i: output) {
+            for (Object j : edeges) {
+                if (i.equals(j)) {
+                    ed[0] = j;
+                    break;
+                }
+            }
+            if(ed != null){
+                break;
+            }
+        }
+        System.out.println(ed);
+        actualGraph.removeCells(ed);
     }
 
     private void addArista(){
