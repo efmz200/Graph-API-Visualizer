@@ -6,12 +6,16 @@ public class test {
     public static ObjectMapper mapper = new ObjectMapper();
     public static void main(String[] args) throws Exception{
         CSVreader reader = new CSVreader();
-        Graph g1 = reader.readCSVFile("src/Resources/Grafo1.csv");
-        Graph g2 = reader.readCSVFile("src/Resources/Grafo2.csv");
+        //Graph g1 = reader.readCSVFile("src/Resources/Grafo1.csv");
+        Graph g1 = reader.readCSVFile("src/Resources/Grafo2.csv");
 
+        Dijkstra dj = new Dijkstra(g1);
+        dj.execute(3);
         System.out.println("-------------------Grafo 1------------------------");
 
-        String grafo1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(g2.sortedNodes("ASC"));
+        String grafo1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(g1.sortedNodes("DESC"));
+        System.out.println(grafo1);
+        grafo1 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dj.getPath(5));
         System.out.println(grafo1);
 
         System.out.println("--------------------------------------------------");

@@ -1,10 +1,7 @@
 package Logic;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -88,12 +85,12 @@ public class Dijkstra {
      * @param node Nodo indicado
      */
     private void findMinimalDistance(Node node){
-        List<Node> neighbours = getNeighbours(node);
-        for (Node target: neighbours){
-            if(getShortestDistance(target) > getShortestDistance(node) + getDistance(node, target)){
-                distance.put(target, getShortestDistance(node) + getDistance(node, target));
-                predecessors.put(target, node);
-                unsettledNodes.add(target);
+        Lista<Node> neighbours = getNeighbours(node);
+        for(int index = 0; index < neighbours.getLargo(); index++){
+            if(getShortestDistance((Node)neighbours.buscar(index).getDato()) > getShortestDistance(node) + getDistance(node, (Node)neighbours.buscar(index).getDato())){
+                distance.put((Node)neighbours.buscar(index).getDato(), getShortestDistance(node) + getDistance(node, (Node)neighbours.buscar(index).getDato()));
+                predecessors.put((Node)neighbours.buscar(index).getDato(), node);
+                unsettledNodes.add((Node)neighbours.buscar(index).getDato());
             }
         }
     }
@@ -107,7 +104,7 @@ public class Dijkstra {
      */
     public Path getPath(int targetId){
         Node target = g.getNode(targetId);
-        ArrayList<Node> path = new ArrayList<Node>();
+        Lista<Node> path = new Lista<Node>();
         Node step = target;
         if (predecessors.get(step) == null){
             return null;
@@ -117,9 +114,18 @@ public class Dijkstra {
             step = predecessors.get(step);
             path.add(step);
         }
-        Collections.reverse(path);
-        int total = calculatePathWeight(path);
-        Path pathObject = new Path(path, total);
+        Node[] camino = new Node[path.getLargo()];
+        for(int index = 0; index < path.getLargo(); index++){
+            camino[index] = (Node) path.buscar(index).getDato();
+        }
+        Node[] caminoOrdenado = new Node[camino.length];
+        int newIndex = 0;
+        for(int index = camino.length-1; index >= 0; index--){
+            caminoOrdenado[newIndex] = camino[index];
+            newIndex++;
+        }
+        int total = calculatePathWeight(caminoOrdenado);
+        Path pathObject = new Path(caminoOrdenado, total);
         return pathObject;
     }
 
@@ -129,8 +135,8 @@ public class Dijkstra {
      * @param node Nodo indicado
      * @return Lista de nodos "vecinos"
      */
-    private List<Node> getNeighbours(Node node){
-        List<Node> neighbours = new ArrayList<Node>();
+    private Lista<Node> getNeighbours(Node node){
+        Lista<Node> neighbours = new Lista<Node>();
         for(Edge edge: edges) {
             if (edge.getStartId() == node.getId() && !isSettled(g.getNode(edge.getEndId()))) {
                 neighbours.add(g.getNode(edge.getEndId()));
@@ -159,7 +165,7 @@ public class Dijkstra {
      * @param path Array que contiene el camino más corto de un nodo a otro
      * @return Peso total del camino
      */
-    private int calculatePathWeight(ArrayList<Node> path){
+    private int calculatePathWeight(Node[] path){
         int weight = 0;
         Node tempNode = null;
         for (Node node: path){
@@ -190,36 +196,4 @@ public class Dijkstra {
      * Objeto que contiene el array que corresponde al camino más corto entre dos nodos, y el peso total de dicho
      * camino.
      */
-    private class Path{
-        private Node[] path;
-        private int totalWeight;
-        public Path(ArrayList<Node> camino, int weight){
-            this.path = toArray(camino);
-            this.totalWeight = weight;
-        }
-
-        private Node[] toArray(ArrayList<Node> camino){
-            Node[] path = new Node[camino.size()];
-            for(int pos = 0; pos < path.length; pos++){
-                path[pos] = camino.get(pos);
-            }
-            return path;
-        }
-
-        /**
-         * Retorna el array del camino entre los dos nodos
-         * @return Array del camino entre los dos nodos
-         */
-        public Node[] getPath(){
-            return this.path;
-        }
-
-        /**
-         * Retorna el peso total del camino entre los dos nodos
-         * @return Peso total del camino entre los dos nodos
-         */
-        public int getTotalWeight(){
-            return this.totalWeight;
-        }
-    }
 }
