@@ -317,22 +317,27 @@ public class Graph {
         }
         int caller = 0;
         int receiver = 0;
+        String sEntity = "";
+        String eEntity = "";
         for(Node i: nodes){
             if(i != null){
                 if (i.getEntity().equals(origen)){
                     i.addOut();
                     caller = i.getId();
+                    sEntity = i.getEntity();
                 }
                 if (i.getEntity().equals(destino)){
                     i.addIn();
                     receiver = i.getId();
+                    eEntity = i.getEntity();
+
                 }
             }
         }
         if(this.arrayFull(edges)){
             this.increaseEdgeArray();
         }
-        this.addEdge(new Edge(id, peso, caller, receiver));
+        this.addEdge(new Edge(id, peso, caller, receiver,sEntity,eEntity));
     }
 
     /**

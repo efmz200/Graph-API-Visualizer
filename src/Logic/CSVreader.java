@@ -7,11 +7,13 @@ import java.io.*;
  */
 public class CSVreader {
     private static int graphCounter = 0;
+
+    public CSVreader(){
+    }
     /**
      * Lee un archivo CSV y crea un grafo a partir de este
      * @param filePath Path hacia el archivo CSV
      * @return Grafo creado a partir del archivo CSV
-     * @throws Exception
      */
     public Graph readCSVFile(String filePath){
         try {
@@ -28,8 +30,8 @@ public class CSVreader {
                 addToGraph(g, source, target, duration);
             }
             br.close();
-            return g;
 
+            return g;
         }catch (Exception e){
             System.out.println(e);
         }
