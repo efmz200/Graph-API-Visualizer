@@ -1,5 +1,9 @@
 package Logic;
 
+/**
+ * Objeto que contiene el array que corresponde al camino más corto entre dos nodos, y el peso total de dicho
+ * camino.
+ */
 public class Path{
     private Node[] path;
     private int totalWeight;

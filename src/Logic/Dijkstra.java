@@ -192,8 +192,5 @@ public class Dijkstra {
         return settledNodes.contains(node);
     }
 
-    /**
-     * Objeto que contiene el array que corresponde al camino más corto entre dos nodos, y el peso total de dicho
-     * camino.
-     */
+
 }
