@@ -1,14 +1,20 @@
 package Logic;
 
+
+
 /**
  * Esta clase corresponde a los nodos del grafo
  */
 public class Node {
-    private int id;
-    private int inDegree;
-    private int outDegree;
-    private int avgDegree;
+    transient private int id;
+    transient private int inDegree;
+    transient private int outDegree;
+    transient private int avgDegree;
     private String entity;
+
+    public Node(String numero){
+        this.entity = numero;
+    }
 
     /**
      * Constructor del nodo
