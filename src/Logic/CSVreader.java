@@ -6,7 +6,7 @@ import java.io.*;
  * Corresponde a la clase que se encarga de leer archivos CSV y crear grafos a partir de estos
  */
 public class CSVreader {
-    private static int graphCounter = 0;
+    private int graphCounter = 0;
 
     public CSVreader(){
     }
@@ -45,7 +45,7 @@ public class CSVreader {
      * @param target Número de teléfono destino
      * @param duration Duración de la llamada
      */
-    private static void addToGraph(Graph g, String source, String target, String duration){
+    private void addToGraph(Graph g, String source, String target, String duration){
         int time = Integer.parseInt(duration);
         g.addNode(source);
         g.addNode(target);
