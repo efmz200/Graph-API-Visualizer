@@ -336,11 +336,18 @@ public class App {
      */
     private void postGraph(Graph grafo){// arreglar
         String json = gson.toJson(grafo);
+        int id = grafo.getId();
+        Node[] n = grafo.getNodes();
+        for(Node no: n ){
+            
+        }
+        Edge[] e = grafo.getEdges();
         try {
             String ruta = "http://localhost:4000/api/graphs/";
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
+
 
         }catch (Exception e){
             System.out.println(e);
@@ -437,7 +444,7 @@ public class App {
         data.getHash().put(numero,v);
         actualGraph.getModel().endUpdate();*/
         try {
-            String direccion = "http://localhost:4000/api/graphs/" + String.valueOf(grafo.getId())+"/nodes/?"; // agregar el valor al query
+            String direccion = "http://localhost:4000/api/graphs/" + String.valueOf(grafo.getId())+"/nodes/?num=" + numero; // agregar el valor al query
             URL url = new URL(direccion);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -510,7 +517,7 @@ public class App {
             GraphData data = buscarData();
             Graph grafo = data.getGrafo();
             Node n = grafo.getNode(numero);
-            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/nodes/" +n.getId() ; // agregar el query con el numero.
+            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/nodes/" +n.getId()+"/?num=" +numero; // agregar el query con el numero.
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("PUT");
@@ -659,7 +666,7 @@ public class App {
         GraphData data = buscarData();
         Graph  grafo = data.getGrafo();
         try {
-            String ruta = "http://localhost:4000/api/graphs/"+grafo.getId()+"/edges/"; //agregar los query respectivos
+            String ruta = "http://localhost:4000/api/graphs/"+grafo.getId()+"/edges/"+"?num1=" + numero1 +"&num2=" +numero3+"&num3=" + numero3 ; //agregar los query respectivos
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -714,7 +721,7 @@ public class App {
             }
         }
         try {
-            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/edges/" +ed.getId() ; // agregar el query con el numero.
+            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/edges/" +ed.getId()+"/?num1=" + numero3 +"&num2=" + numero4+ "&num3=" + numero5 ; // agregar el query con el numero.
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("PUT");
