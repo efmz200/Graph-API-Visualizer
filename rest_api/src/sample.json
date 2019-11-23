@@ -1,0 +1,35 @@
+[
+    {
+        "id":"1",
+        "nodes": {
+            "id":"1",
+            "inDegree":"input",
+            "outDegree":"output",
+            "entity":"objet json"
+        },
+        "edges":{
+            "id":"1",
+            "start":"nodo inicial",
+            "end":"nodo final",
+            "weight":"peso de la ruta"
+        }
+
+    },
+
+    {
+        "id":"2",
+        "nodes": {
+            "id":"2",
+            "inDegree":"OTRO input",
+            "outDegree":"OTRO output",
+            "entity":"OTRO objet json"
+        },
+        "edges":{
+            "id":"2",
+            "start":"OTRO nodo inicial",
+            "end":"OTRO nodo final",
+            "weight":"OTRO peso de la ruta"
+        }
+
+    }
+]

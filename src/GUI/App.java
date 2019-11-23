@@ -55,10 +55,16 @@ public class App {
      * Constructor de la clase.
      */
     public App() {
+        listaGrafos = new Lista<>();
+        Graph a = new Graph(1);
+        mxGraph b =new mxGraph();
+        JMenuItem item = new JMenuItem("item");
+        btnGrafos.add(item);
+        listaGrafos.add(new GraphData(b,a,new HashMap(),item));
         gson = new Gson();
         hash = new HashMap();
         mxGraph graph = new mxGraph();
-        listaGrafos = new Lista<>();
+
         component = new mxGraphComponent(graph);
         component.setPreferredSize(new Dimension(640,610));
         cargar.addActionListener(new ActionListener() {
@@ -225,7 +231,7 @@ public class App {
     private void getI(){
         try {
             String h = JOptionPane.showInputDialog("id del grafo");
-            String ruta = "http://localhost:4000/api/graphs/?nombre=" +h;
+            String ruta = "http://localhost:4000/api/graphs/" +h;
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -331,7 +337,7 @@ public class App {
     private void postGraph(Graph grafo){// arreglar
         String json = gson.toJson(grafo);
         try {
-            String ruta = "http://localhost:4000/graph/";
+            String ruta = "http://localhost:4000/api/graphs/";
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -431,10 +437,11 @@ public class App {
         data.getHash().put(numero,v);
         actualGraph.getModel().endUpdate();*/
         try {
-            String direccion = "http://localhost:4000/graph/" + String.valueOf(grafo.getId())+"/nodes/"; // agregar el valor al query
+            String direccion = "http://localhost:4000/api/graphs/" + String.valueOf(grafo.getId())+"/nodes/?"; // agregar el valor al query
             URL url = new URL(direccion);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
+            generalGet(grafo.getId());
         }catch (Exception e){
             System.out.println(e);
         }
@@ -446,7 +453,7 @@ public class App {
      */
     private void generalGet(int id){
         try {
-            String ruta = "http://localhost:4000/api/graphs/?nombre=" + id;
+            String ruta = "http://localhost:4000/api/graphs/" + id;
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -460,7 +467,8 @@ public class App {
             in.close();
             String contentGraph = content.toString();
             Graph graph = gson.fromJson(contentGraph, Graph.class);
-            dibujarGrafo(graph);
+            GraphData data = buscarData(graph);
+            redraw(data);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -475,7 +483,7 @@ public class App {
         GraphData data = buscarData();
         Graph grafo = data.getGrafo();
         Node nodo = grafo.getNode(numero);
-        String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/nodes/" + nodo.getId();
+        String ruta = "http://localhost:4000/api/graphs/" + "0" + "/nodes/" + "0";
         try {
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
