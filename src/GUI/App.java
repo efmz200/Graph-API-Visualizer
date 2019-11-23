@@ -193,35 +193,6 @@ public class App {
         CSVreader csVreader = getInstancia();
         dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
     }
-
-    /**
-     * Metodo encargado de redibujar un grafo
-     * @param data objeto que guarda todos los datos del grafo que se desea dibujar
-     */
-    private void redraw(GraphData data){
-        mxGraph grafico = new mxGraph();
-        actualGraph = grafico;
-        component.setGraph(grafico);
-        Graph graf = data.getGrafo();
-        Edge[] ed  = graf.getEdges();
-        Node [] nodes = graf.getNodes();
-        Object parent = grafico.getDefaultParent();
-        grafico.getModel().beginUpdate();
-        for(Node w: nodes){
-            Object v = grafico.insertVertex(parent,null,w.getEntity(),(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50 );
-            hash.put(w.getEntity(),v);
-        }
-        for(Edge e: ed){
-            Object v1 = hash.get(e.getsEntity());
-            Object v2 = hash.get(e.geteEntity());
-            grafico.insertEdge(parent,null,e.getWeight(),v1,v2);
-        }
-        grafico.getModel().endUpdate();
-    }
-
-    /**
-     * Metodo que solicita un id de un grafo al cliente para hacer la solicitud de un grafo.
-     */
     private void getI(){
         try {
             String h = JOptionPane.showInputDialog("id del grafo");
