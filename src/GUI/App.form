@@ -85,35 +85,71 @@
                           <text value="Dijkstra"/>
                         </properties>
                       </component>
+                      <component id="98d38" class="javax.swing.JMenuItem" binding="get">
+                        <constraints/>
+                        <properties>
+                          <text value="Get Grafo"/>
+                        </properties>
+                      </component>
+                      <component id="e9b05" class="javax.swing.JMenuItem" binding="delGrafos">
+                        <constraints/>
+                        <properties>
+                          <text value="eliminar grafos"/>
+                        </properties>
+                      </component>
+                      <component id="f6873" class="javax.swing.JMenuItem" binding="allVertices">
+                        <constraints/>
+                        <properties>
+                          <text value="Ver solo vertices"/>
+                        </properties>
+                      </component>
+                      <component id="96524" class="javax.swing.JMenuItem" binding="delVetices">
+                        <constraints/>
+                        <properties>
+                          <text value="eliminar vertices"/>
+                        </properties>
+                      </component>
+                      <component id="4c6de" class="javax.swing.JMenuItem" binding="allAristas">
+                        <constraints/>
+                        <properties>
+                          <hideActionText value="true"/>
+                          <text value="Ver Aristas"/>
+                        </properties>
+                      </component>
+                      <component id="63801" class="javax.swing.JMenuItem" binding="delAristas">
+                        <constraints/>
+                        <properties>
+                          <text value="Eliminar aristas"/>
+                        </properties>
+                      </component>
+                      <component id="9caa" class="javax.swing.JMenuItem" binding="actAristas">
+                        <constraints/>
+                        <properties>
+                          <text value="Actualizar arista"/>
+                        </properties>
+                      </component>
+                      <component id="4f2ee" class="javax.swing.JMenuItem" binding="actNodo">
+                        <constraints/>
+                        <properties>
+                          <text value="Actualizar Nodo"/>
+                        </properties>
+                      </component>
+                      <component id="2a87" class="javax.swing.JMenuItem" binding="delGrafo">
+                        <constraints/>
+                        <properties>
+                          <text value="Eliminar un grafo"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
-                  <grid id="a9cd2" class="javax.swing.JMenu" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                  <grid id="a9cd2" class="javax.swing.JMenu" binding="btnGrafos" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
                     <constraints border-constraint="Center"/>
                     <properties>
                       <horizontalAlignment value="2"/>
-                      <text value="API"/>
+                      <text value="Grafos"/>
                     </properties>
                     <border type="none"/>
-                    <children>
-                      <component id="3cd8d" class="javax.swing.JMenuItem" binding="get">
-                        <constraints/>
-                        <properties>
-                          <text value="Get"/>
-                        </properties>
-                      </component>
-                      <component id="7cddf" class="javax.swing.JMenuItem" binding="post">
-                        <constraints/>
-                        <properties>
-                          <text value="Post"/>
-                        </properties>
-                      </component>
-                      <component id="51e72" class="javax.swing.JMenuItem" binding="put">
-                        <constraints/>
-                        <properties>
-                          <text value="Put"/>
-                        </properties>
-                      </component>
-                    </children>
+                    <children/>
                   </grid>
                 </children>
               </grid>
