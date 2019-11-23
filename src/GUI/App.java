@@ -128,10 +128,13 @@ public class App {
         CSVreader csVreader = new CSVreader();
         dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
     }
+    /*
+    Función que descarga un grafo segun el id
+     */
     private void getI(){
         try {
             String h = JOptionPane.showInputDialog("id");
-            String ryta = "http://localhost:4000/api/graphs/?nombre=" +h;
+            String ryta = "http://localhost:4000/api/graphs/"+h;
             URL url = new URL(ryta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
