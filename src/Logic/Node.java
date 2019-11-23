@@ -1,14 +1,20 @@
 package Logic;
 
+
+
 /**
  * Esta clase corresponde a los nodos del grafo
  */
 public class Node {
-    private int id;
-    private int inDegree;
-    private int outDegree;
-    private int avgDegree;
+    transient private int id;
+    transient private int inDegree;
+    transient private int outDegree;
+    transient private int avgDegree;
     private String entity;
+
+    public Node(String numero){
+        this.entity = numero;
+    }
 
     /**
      * Constructor del nodo
@@ -84,14 +90,6 @@ public class Node {
     }
 
     /**
-     * Establece el grado de inputs del nodo
-     * @param inDegree
-     */
-    public void setInDegree(int inDegree) {
-        this.inDegree = inDegree;
-    }
-
-    /**
      * Retorna el grado de outputs del nodo
      * @return Grado de outputs del nodo
      */
@@ -115,11 +113,4 @@ public class Node {
         return entity;
     }
 
-    /**
-     * Establece el número almacenado del nodo
-     * @param entity Número almacenado del nodo
-     */
-    public void setEntity(String entity) {
-        this.entity = entity;
-    }
 }

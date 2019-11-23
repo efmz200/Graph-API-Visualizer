@@ -388,8 +388,9 @@ public class Graph {
     private Node[] reverse(Node[] array){
         Node[] reversedArray = new Node[array.length];
         int newPos = 0;
-        for(int pos = array.length-1; pos > 0; pos--){
+        for(int pos = array.length-1; pos >= 0; pos--){
             reversedArray[newPos] = array[pos];
+            newPos++;
         }
         return reversedArray;
     }

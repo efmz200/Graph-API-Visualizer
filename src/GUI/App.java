@@ -1,8 +1,10 @@
 package GUI;
 
 import Logic.*;
+import com.google.gson.Gson;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import com.sun.jndi.toolkit.url.UrlUtil;
 import sun.management.snmp.jvmmib.JvmRTBootClassPathEntryMBean;
 import sun.plugin2.message.Message;
 
@@ -11,7 +13,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 
 
@@ -29,6 +35,7 @@ public class App {
     private JMenuItem post;
     private JMenuItem put;
     private mxGraph actualGraph;
+    private Gson gson;
     private JPanel scroll;
     private Lista<GraphData> listaGrafos;
     private mxGraphComponent component;
@@ -36,6 +43,7 @@ public class App {
 
 
     public App() {
+        gson = new Gson();
         hash = new HashMap();
         mxGraph graph = new mxGraph();
         listaGrafos = new Lista<>();
@@ -87,6 +95,7 @@ public class App {
         get.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                getI();
                 System.out.println("get");
             }
         });
@@ -117,6 +126,30 @@ public class App {
         CSVreader csVreader = new CSVreader();
         dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
     }
+    private void getI(){
+        try {
+            String h = JOptionPane.showInputDialog("id");
+            String ryta = "http://localhost:4000/graph/?nombre=" + h;
+            URL url = new URL(ryta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            //int status = con.getResponseCode();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            System.out.println(content);
+            in.close();
+            Graph graph = gson.fromJson(gson.toJson(content),Graph.class);
+            dibujarGrafo(graph);
+            //System.out.println(status);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * Metodo encargado de mostrar gráficamente un grafo.
@@ -144,6 +177,21 @@ public class App {
         HashMap map = hash; // puede ser un problema.
         GraphData data = new GraphData(grafo,graf,map);
         listaGrafos.add(data);
+        //postGraph(graf);
+
+    }
+    private void postGraph(Graph grafo){
+        String json = gson.toJson(grafo);
+        try {
+            String ruta = "http://localhost:4000/graph/";
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 
     private void agregarG(){
@@ -167,14 +215,23 @@ public class App {
     }
     private void addVertice(){
         String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono");
+        Node n = new Node(numero);
         GraphData data = buscarData();
         Graph grafo = data.getGrafo();
-        grafo.addNode(numero);
+        /*grafo.addNode(numero);
         Object parent = actualGraph.getDefaultParent();
         actualGraph.getModel().beginUpdate();
         Object v = actualGraph.insertVertex(parent,null,numero,(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50);
         data.getHash().put(numero,v);
-        actualGraph.getModel().endUpdate();
+        actualGraph.getModel().endUpdate();*/
+        try {
+            String direccion = "http://localhost:4000/graph/" + String.valueOf(grafo.getId())+"/nodes/";
+            URL url = new URL(direccion);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+        }catch (Exception e){
+            System.out.println(e);
+        }
     }
     private void eliminarVertice(){
         String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono que desea eliminar");
