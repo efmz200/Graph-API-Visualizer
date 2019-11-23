@@ -13,7 +13,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -93,6 +95,7 @@ public class App {
         get.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                getI();
                 System.out.println("get");
             }
         });
@@ -123,6 +126,30 @@ public class App {
         CSVreader csVreader = new CSVreader();
         dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
     }
+    private void getI(){
+        try {
+            String h = JOptionPane.showInputDialog("id");
+            String ryta = "http://localhost:4000/graph/?nombre=" + h;
+            URL url = new URL(ryta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            //int status = con.getResponseCode();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            System.out.println(content);
+            in.close();
+            Graph graph = gson.fromJson(gson.toJson(content),Graph.class);
+            dibujarGrafo(graph);
+            //System.out.println(status);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * Metodo encargado de mostrar gráficamente un grafo.
@@ -150,6 +177,21 @@ public class App {
         HashMap map = hash; // puede ser un problema.
         GraphData data = new GraphData(grafo,graf,map);
         listaGrafos.add(data);
+        //postGraph(graf);
+
+    }
+    private void postGraph(Graph grafo){
+        String json = gson.toJson(grafo);
+        try {
+            String ruta = "http://localhost:4000/graph/";
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 
     private void agregarG(){
