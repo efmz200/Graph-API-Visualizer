@@ -4,11 +4,6 @@ import Logic.*;
 import com.google.gson.Gson;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonObject;
-import com.sun.jndi.toolkit.url.UrlUtil;
-import sun.management.snmp.jvmmib.JvmRTBootClassPathEntryMBean;
-import sun.plugin2.message.Message;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -22,7 +17,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
+import static Logic.Singleton.getInstancia;
 
+/**
+ * Clase encargada de conectar la interfaz con el API. Tambien visualiza los grafos.
+ * @author Sebastian Moya
+ */
 public class App {
     private JPanel panel1;
     private HashMap hash;
@@ -34,16 +34,26 @@ public class App {
     private JMenuItem deleteA;
     private JMenuItem Dijkstra;
     private JMenuItem get;
-    private JMenuItem post;
-    private JMenuItem put;
     private mxGraph actualGraph;
     private Gson gson;
-    private JPanel scroll;
+    private int cont = 1;
+    private String var;
+    private JMenu btnGrafos;
+    private JMenuItem delGrafos;
+    private JMenuItem allVertices;
+    private JMenuItem delVetices;
+    private JMenuItem allAristas;
+    private JMenuItem delAristas;
+    private JMenuItem actAristas;
+    private JMenuItem actNodo;
+    private JMenuItem delGrafo;
+    private JMenuItem delgrafo;
     private Lista<GraphData> listaGrafos;
     private mxGraphComponent component;
-    //private Lista<mxGraph>listaGrafica;
 
-
+    /**
+     * Constructor de la clase.
+     */
     public App() {
         gson = new Gson();
         hash = new HashMap();
@@ -98,23 +108,78 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 getI();
-                System.out.println("get");
             }
         });
-        post.addActionListener(new ActionListener() {
+        delGrafos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("post");
+                eliminarGrafos();
             }
         });
-        put.addActionListener(new ActionListener() {
+        allVertices.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("put");
+                mostrarNodos();
+            }
+        });
+        delVetices.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                delNodos();
+            }
+        });
+        allAristas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getEdges();
+            }
+        });
+        delAristas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleAristas();
+            }
+        });
+        actAristas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actArista();
+            }
+        });
+        actNodo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actualizarVertice();
             }
         });
         draw.add(component);
-        agregarG();
+        delgrafo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eliminarGraf();
+            }
+        });
+    }
+
+    /**
+     * Metodo encargado de eliminar un grafo en especifico.
+     */
+    private void eliminarGraf(){
+        try {
+            GraphData data = buscarData();
+            Graph grafo = data.getGrafo();
+            String ruta = "http://localhost:4000/api/graphs/" +grafo.getId() ;
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            component = new mxGraphComponent(new mxGraph());
+            btnGrafos.remove(data.getItem());
+            actualGraph = null;
+            cont--;
+            listaGrafos.eliminar(listaGrafos.getPos(data));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -125,14 +190,43 @@ public class App {
         chooser.setFileFilter(new FileNameExtensionFilter("CSV filter", "csv"));
         chooser.showOpenDialog(null);
         File archivo = chooser.getSelectedFile();
-        CSVreader csVreader = new CSVreader();
+        CSVreader csVreader = getInstancia();
         dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
     }
+
+    /**
+     * Metodo encargado de redibujar un grafo
+     * @param data objeto que guarda todos los datos del grafo que se desea dibujar
+     */
+    private void redraw(GraphData data){
+        mxGraph grafico = new mxGraph();
+        actualGraph = grafico;
+        component.setGraph(grafico);
+        Graph graf = data.getGrafo();
+        Edge[] ed  = graf.getEdges();
+        Node [] nodes = graf.getNodes();
+        Object parent = grafico.getDefaultParent();
+        grafico.getModel().beginUpdate();
+        for(Node w: nodes){
+            Object v = grafico.insertVertex(parent,null,w.getEntity(),(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50 );
+            hash.put(w.getEntity(),v);
+        }
+        for(Edge e: ed){
+            Object v1 = hash.get(e.getsEntity());
+            Object v2 = hash.get(e.geteEntity());
+            grafico.insertEdge(parent,null,e.getWeight(),v1,v2);
+        }
+        grafico.getModel().endUpdate();
+    }
+
+    /**
+     * Metodo que solicita un id de un grafo al cliente para hacer la solicitud de un grafo.
+     */
     private void getI(){
         try {
             String h = JOptionPane.showInputDialog("id del grafo");
-            String ryta = "http://localhost:4000/api/graphs/?nombre=" +h;
-            URL url = new URL(ryta);
+            String ruta = "http://localhost:4000/api/graphs/?nombre=" +h;
+            URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             //int status = con.getResponseCode();
@@ -142,17 +236,52 @@ public class App {
             while ((inputLine = in.readLine()) != null) {
                 content.append(inputLine);
             }
-            System.out.println(content);
             in.close();
             String contentGraph = content.toString();
-            System.out.println(contentGraph);
             Graph graph = gson.fromJson(contentGraph, Graph.class);
-            dibujarGrafo(graph);
-            //System.out.println(status);
+            GraphData data = buscarData(graph);
+            redraw(data);
         }catch (Exception e){
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Metodo que busca los datos correctos de un grafo
+     * @param grafo grafo al que se le desea buscar sus datos en la lista
+     * @return datos del grafo
+     */
+    private GraphData buscarData(Graph grafo){
+        NodoL temp = listaGrafos.getHead();
+        GraphData g = (GraphData) temp.getDato();
+        for(int i=0; i<listaGrafos.getLargo(); i++){
+            g = (GraphData) temp.getDato();
+            if(g.getGrafo().getId() == grafo.getId()){
+                g.getGrafo().modificarGrafo(grafo.getNodes(),grafo.getEdges(),grafo.getNodeCounter(),grafo.getEdgeCounter());
+                break;
+            }
+            temp = temp.getNext();
+        }
+        return g;
+    }
+
+    /**
+     * Comprueba que el item seleccionado concuerde con los datos del grafo.
+     * @param var texto del item.
+     */
+    private void comprobar(String var){
+        NodoL temp = listaGrafos.getHead();
+        GraphData data = (GraphData) temp.getDato();
+        for (int i = 0; i<listaGrafos.getLargo(); i++){
+            data = (GraphData) temp.getDato();
+            if (data.getItem().getText().equals(var)){
+                break;
+            }
+            temp = temp.getNext();
+        }
+        actualGraph = data.getGrafoG();
+        generalGet(data.getGrafo().getId());
     }
 
     /**
@@ -161,6 +290,16 @@ public class App {
      */
     private void dibujarGrafo(Graph graf){
         mxGraph grafo = new mxGraph();
+        JMenuItem menuItem = new JMenuItem("grafo " + cont);
+        cont++;
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                var = menuItem.getText();
+                comprobar(var);
+            }
+        });
+        btnGrafos.add(menuItem);
         actualGraph = grafo;
         component.setGraph(grafo);
         draw.add(component);
@@ -179,12 +318,17 @@ public class App {
         }
         grafo.getModel().endUpdate();
         HashMap map = hash; // puede ser un problema.
-        GraphData data = new GraphData(grafo,graf,map);
+        GraphData data = new GraphData(grafo,graf,map,menuItem);
         listaGrafos.add(data);
         //postGraph(graf);
 
     }
-    private void postGraph(Graph grafo){
+
+    /**
+     * Metodo encargado de cargar un nuevo grafo al API;
+     * @param grafo grafo que se desea cargar.
+     */
+    private void postGraph(Graph grafo){// arreglar
         String json = gson.toJson(grafo);
         try {
             String ruta = "http://localhost:4000/graph/";
@@ -198,12 +342,66 @@ public class App {
 
     }
 
-    private void agregarG(){
-        JLabel label = new JLabel("hidj");
-        label.setBounds(10,60,50,50);
-
-
+    /**
+     * Metodo que elimina todos los grafos del API
+     */
+    private void eliminarGrafos(){
+        try {
+            String ruta = "http://localhost:4000/api/graphs/";
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            component = new mxGraphComponent(new mxGraph());
+            btnGrafos.removeAll();
+            listaGrafos.reset();
+            cont = 0;
+            actualGraph = null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
+
+    /**
+     * Metodo que hace la solicitud de los nodos de un grafo al API.
+     */
+    private void mostrarNodos(){
+        try {
+            GraphData data = buscarData();
+            Graph grafo = data.getGrafo();
+            String ruta = "http://localhost:4000/api/graphs/"+grafo.getId()+"/nodes";
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            String contentGraph = content.toString();
+            Node[] n  = gson.fromJson(contentGraph, Node[].class); // ni idea de si funciona
+            printNodos(n);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metodo que muestra en interfaz los nodos de un grafo
+     * @param nodes array con los nodos de un grafo
+     */
+    private void printNodos(Node[] nodes){
+        String resultado = "";
+        for (Node n: nodes){
+            resultado += "Telénofo: "+n.getEntity()+"\n";
+        }
+        JOptionPane.showMessageDialog(null,resultado);
+    }
+    /**
+     * Metodo encargado de buscar en la lista de grafos el grafo con el que se desea trabajar
+     * @return
+     */
     private GraphData buscarData(){
         NodoL temp = listaGrafos.getHead();
         GraphData data = (GraphData)temp.getDato();
@@ -217,8 +415,12 @@ public class App {
         }
         return data;
     }
+
+    /**
+     * Metodo encargado de solicitar al API de crear un nuevo vertice en el grafo con el numero solicitado.
+     */
     private void addVertice(){
-        String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono");
+        String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono"); // valor que se le asigna al query
         Node n = new Node(numero);
         GraphData data = buscarData();
         Graph grafo = data.getGrafo();
@@ -229,7 +431,7 @@ public class App {
         data.getHash().put(numero,v);
         actualGraph.getModel().endUpdate();*/
         try {
-            String direccion = "http://localhost:4000/graph/" + String.valueOf(grafo.getId())+"/nodes/";
+            String direccion = "http://localhost:4000/graph/" + String.valueOf(grafo.getId())+"/nodes/"; // agregar el valor al query
             URL url = new URL(direccion);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -237,18 +439,138 @@ public class App {
             System.out.println(e);
         }
     }
+
+    /**
+     * Metodo que realiza una solicitud al API despues de cada accion que se realice con un grafo.
+     * @param id id del grafo que se desea obtener
+     */
+    private void generalGet(int id){
+        try {
+            String ruta = "http://localhost:4000/api/graphs/?nombre=" + id;
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            //int status = con.getResponseCode();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            String contentGraph = content.toString();
+            Graph graph = gson.fromJson(contentGraph, Graph.class);
+            dibujarGrafo(graph);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Metodo encargado de notificar al API de que se desea eliminar un vertice.
+     */
     private void eliminarVertice(){
         String numero = JOptionPane.showInputDialog("Introduzca el número de teléfono que desea eliminar");
         GraphData data = buscarData();
         Graph grafo = data.getGrafo();
-        HashMap hash = data.getHash();
+        Node nodo = grafo.getNode(numero);
+        String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/nodes/" + nodo.getId();
+        try {
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            generalGet(grafo.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        /*HashMap hash = data.getHash();
         grafo.removeNode(grafo.getNode(numero).getId());
         Object v = hash.get(numero);
         Object[] o = actualGraph.getEdges(v);
         actualGraph.removeCells(o);
         actualGraph.getModel().remove(v);
-        hash.remove(numero);
+        hash.remove(numero);*/
     }
+
+    /**
+     * Metodo que envia al API la información que del vertice que se desea modificar.
+     */
+    private void actualizarVertice(){
+        try {
+            String numero = JOptionPane.showInputDialog("Inserte el número del vertice que desea modificar"); // variable que se desea mandar
+            GraphData data = buscarData();
+            Graph grafo = data.getGrafo();
+            Node n = grafo.getNode(numero);
+            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/nodes/" +n.getId() ; // agregar el query con el numero.
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("PUT");
+            generalGet(grafo.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metodo que realiza una solicitud al API de eliminar todos los nodos de un grafo.
+     */
+    private void delNodos(){
+        try {
+            GraphData data = buscarData();
+            Graph grafo = data.getGrafo();
+            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/nodes/" ;
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            generalGet(grafo.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metodo que hace una solicitud al API de todas las aristas de un grafo.
+     */
+    private void getEdges(){
+        try {
+            GraphData data = buscarData();
+            Graph grafo = data.getGrafo();
+            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/edges/";
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            String contentGraph = content.toString();
+            Edge[] e  = gson.fromJson(contentGraph, Edge[].class); // ni idea de si funciona
+            printEdges(e);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metodo encargado de mostrar todas las arista en pantalla.
+     * @param e
+     */
+    private void printEdges(Edge[] e){
+        String resultado = "";
+        for (Edge ed: e){
+            resultado += "Comienzo: "+ed.getsEntity()+"      Final: "+ ed.geteEntity() + "    Peso: " + ed.getWeight() + "\n";
+        }
+        JOptionPane.showMessageDialog(null,resultado);
+    }
+
+    /**
+     * Metodo encargado de mostrar la ruta mas corta entre dos vertices.
+     */
     private void calcularDijkstra(){
         String numero = JOptionPane.showInputDialog("introduzca el nodo inicial");
         String numero2 = JOptionPane.showInputDialog("introduzca el nodo final");
@@ -272,12 +594,33 @@ public class App {
         }
     }
 
+    /**
+     * Metodo encargado de notifiacar al API de la arista que se desea eliminar del modelo.
+     */
     private void eliminarArista(){
         String numero1 = JOptionPane.showInputDialog("Introduzca el vertice que se tiene al inicio");
         String numero2 = JOptionPane.showInputDialog("Introduzca el vertice de llegada");
         GraphData data = buscarData();
         Graph  grafo = data.getGrafo();
-        HashMap hashMap = data.getHash();
+        Edge[] edges = grafo.getEdges();
+        Edge ed = null;
+        for(Edge e: edges){
+            if (e.getsEntity().equals(numero1)&e.geteEntity().equals(numero2)){
+                ed = e;
+                break;
+            }
+        }
+        try {
+            String ruta = "http://localhost:4000/api/graphs/"+grafo.getId()+"/edges/" + ed.getId();
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            generalGet(grafo.getId());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        /*HashMap hashMap = data.getHash();
         Object v1 =hashMap.get(numero1);
         Object v2 = hashMap.get(numero2);
         Object[] output = actualGraph.getOutgoingEdges(v1);
@@ -295,31 +638,82 @@ public class App {
             }
         }
         System.out.println(ed);
-        actualGraph.removeCells(ed);
+        actualGraph.removeCells(ed);*/
     }
 
+    /**
+     * Metodo encargado de crear una nueva arista y enviarla al API. Tambien refresaca el grafo
+     */
     private void addArista(){
         String numero1 = JOptionPane.showInputDialog("Vertice inicial");
-        String numero2 = JOptionPane.showInputDialog("Vertice Final");
+        String numero2 = JOptionPane.showInputDialog("Vertice Final"); // datos a pasar en forma de query
         String numero3 = JOptionPane.showInputDialog("Agregar Peso");
         GraphData data = buscarData();
         Graph  grafo = data.getGrafo();
-        HashMap hashMap = data.getHash();
+        try {
+            String ruta = "http://localhost:4000/api/graphs/"+grafo.getId()+"/edges/"; //agregar los query respectivos
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            generalGet(grafo.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        /*HashMap hashMap = data.getHash();
         Object v1 = hashMap.get(numero1);
         Object v2 = hashMap.get(numero2);
         actualGraph.getModel().beginUpdate();
         actualGraph.insertEdge(actualGraph.getDefaultParent(),null,Integer.parseInt(numero3),v1,v2);
         grafo.addEdge(numero1,numero2,Integer.parseInt(numero3));
-        actualGraph.getModel().endUpdate();
+        actualGraph.getModel().endUpdate();*/
 
     }
 
     /**
-     * Metodo que muestra el grafo seleccionado en pantalla.
-     * @param graph grafo que se desea mostrar.
+     * Metodo encargado de hacer la solicitud al Api de eliminar todas las aristas de un grafo.
      */
-    private void mostrarGrafo(mxGraph graph){
-        component.setGraph(graph);
+    private void deleAristas(){
+        try {
+            GraphData data = buscarData();
+            Graph grafo = data.getGrafo();
+            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/edges/" ;
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            generalGet(grafo.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metodo encargado de solicitar al API de que realice una  actualización de una arista.
+     */
+    private void actArista(){
+        String numero1 = JOptionPane.showInputDialog("Introduzca el vertice que se tiene al inicio");
+        String numero2 = JOptionPane.showInputDialog("Introduzca el vertice de llegada");
+        String numero3 = JOptionPane.showInputDialog("Introduzca el número de donde se quiere inicar");// atributos que se desean agregar al query
+        String numero4 = JOptionPane.showInputDialog("Introduzca el número de donde se quiere llegar");
+        String numero5 = JOptionPane.showInputDialog("introduzca el nuevo peso");
+        GraphData data = buscarData();
+        Graph  grafo = data.getGrafo();
+        Edge[] edges = grafo.getEdges();
+        Edge ed = null;
+        for(Edge e: edges){
+            if (e.getsEntity().equals(numero1)&e.geteEntity().equals(numero2)){
+                ed = e;
+                break;
+            }
+        }
+        try {
+            String ruta = "http://localhost:4000/api/graphs/" + grafo.getId() + "/edges/" +ed.getId() ; // agregar el query con el numero.
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("PUT");
+            generalGet(grafo.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
