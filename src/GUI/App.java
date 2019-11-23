@@ -130,7 +130,7 @@ public class App {
     }
     private void getI(){
         try {
-            String h = JOptionPane.showInputDialog("id");
+            String h = JOptionPane.showInputDialog("id del grafo");
             String ryta = "http://localhost:4000/api/graphs/?nombre=" +h;
             URL url = new URL(ryta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
