@@ -442,4 +442,26 @@ public class Graph {
     public void setEdges(Edge[] edges) {
         this.edges = edges;
     }
+
+    /**
+     * Metodo encargado de modificar los datos de un grafo
+     * @param n lista de nodos
+     * @param e lista de aristas
+     * @param ncounter contador de nodos
+     * @param eCounter contador de aristas
+     */
+    public void modificarGrafo(Node[]n, Edge[]e,int ncounter,int eCounter){
+        this.edges = e;
+        this.nodes = n;
+        this.nodeCounter = ncounter;
+        this.edgeCounter = eCounter;
+    }
+
+    public int getNodeCounter() {
+        return nodeCounter;
+    }
+
+    public int getEdgeCounter() {
+        return edgeCounter;
+    }
 }

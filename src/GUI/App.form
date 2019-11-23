@@ -140,6 +140,12 @@
                           <text value="Eliminar un grafo"/>
                         </properties>
                       </component>
+                      <component id="66197" class="javax.swing.JMenuItem" binding="delgrafo">
+                        <constraints/>
+                        <properties>
+                          <text value="Borrar grafo"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                   <grid id="a9cd2" class="javax.swing.JMenu" binding="btnGrafos" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
@@ -175,7 +181,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <grid id="76f85" binding="scroll" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="76f85" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints/>
                 <properties/>

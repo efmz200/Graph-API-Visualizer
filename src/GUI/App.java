@@ -36,6 +36,8 @@ public class App {
     private JMenuItem get;
     private mxGraph actualGraph;
     private Gson gson;
+    private int cont = 1;
+    private String var;
     private JMenu btnGrafos;
     private JMenuItem delGrafos;
     private JMenuItem allVertices;
@@ -45,9 +47,9 @@ public class App {
     private JMenuItem actAristas;
     private JMenuItem actNodo;
     private JMenuItem delGrafo;
+    private JMenuItem delgrafo;
     private Lista<GraphData> listaGrafos;
     private mxGraphComponent component;
-    //private Lista<mxGraph>listaGrafica;
 
     /**
      * Constructor de la clase.
@@ -151,7 +153,33 @@ public class App {
             }
         });
         draw.add(component);
-        agregarG();
+        delgrafo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eliminarGraf();
+            }
+        });
+    }
+
+    /**
+     * Metodo encargado de eliminar un grafo en especifico.
+     */
+    private void eliminarGraf(){
+        try {
+            GraphData data = buscarData();
+            Graph grafo = data.getGrafo();
+            String ruta = "http://localhost:4000/api/graphs/" +grafo.getId() ;
+            URL url = new URL(ruta);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            component = new mxGraphComponent(new mxGraph());
+            btnGrafos.remove(data.getItem());
+            actualGraph = null;
+            cont--;
+            listaGrafos.eliminar(listaGrafos.getPos(data));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -164,6 +192,31 @@ public class App {
         File archivo = chooser.getSelectedFile();
         CSVreader csVreader = getInstancia();
         dibujarGrafo(csVreader.readCSVFile(archivo.getAbsolutePath()));
+    }
+
+    /**
+     * Metodo encargado de redibujar un grafo
+     * @param data objeto que guarda todos los datos del grafo que se desea dibujar
+     */
+    private void redraw(GraphData data){
+        mxGraph grafico = new mxGraph();
+        actualGraph = grafico;
+        component.setGraph(grafico);
+        Graph graf = data.getGrafo();
+        Edge[] ed  = graf.getEdges();
+        Node [] nodes = graf.getNodes();
+        Object parent = grafico.getDefaultParent();
+        grafico.getModel().beginUpdate();
+        for(Node w: nodes){
+            Object v = grafico.insertVertex(parent,null,w.getEntity(),(int)(Math.random()*500)+30,(int)(Math.random()*500)+20,100,50 );
+            hash.put(w.getEntity(),v);
+        }
+        for(Edge e: ed){
+            Object v1 = hash.get(e.getsEntity());
+            Object v2 = hash.get(e.geteEntity());
+            grafico.insertEdge(parent,null,e.getWeight(),v1,v2);
+        }
+        grafico.getModel().endUpdate();
     }
 
     /**
@@ -186,11 +239,49 @@ public class App {
             in.close();
             String contentGraph = content.toString();
             Graph graph = gson.fromJson(contentGraph, Graph.class);
-            dibujarGrafo(graph);
+            GraphData data = buscarData(graph);
+            redraw(data);
         }catch (Exception e){
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Metodo que busca los datos correctos de un grafo
+     * @param grafo grafo al que se le desea buscar sus datos en la lista
+     * @return datos del grafo
+     */
+    private GraphData buscarData(Graph grafo){
+        NodoL temp = listaGrafos.getHead();
+        GraphData g = (GraphData) temp.getDato();
+        for(int i=0; i<listaGrafos.getLargo(); i++){
+            g = (GraphData) temp.getDato();
+            if(g.getGrafo().getId() == grafo.getId()){
+                g.getGrafo().modificarGrafo(grafo.getNodes(),grafo.getEdges(),grafo.getNodeCounter(),grafo.getEdgeCounter());
+                break;
+            }
+            temp = temp.getNext();
+        }
+        return g;
+    }
+
+    /**
+     * Comprueba que el item seleccionado concuerde con los datos del grafo.
+     * @param var texto del item.
+     */
+    private void comprobar(String var){
+        NodoL temp = listaGrafos.getHead();
+        GraphData data = (GraphData) temp.getDato();
+        for (int i = 0; i<listaGrafos.getLargo(); i++){
+            data = (GraphData) temp.getDato();
+            if (data.getItem().getText().equals(var)){
+                break;
+            }
+            temp = temp.getNext();
+        }
+        actualGraph = data.getGrafoG();
+        generalGet(data.getGrafo().getId());
     }
 
     /**
@@ -199,6 +290,16 @@ public class App {
      */
     private void dibujarGrafo(Graph graf){
         mxGraph grafo = new mxGraph();
+        JMenuItem menuItem = new JMenuItem("grafo " + cont);
+        cont++;
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                var = menuItem.getText();
+                comprobar(var);
+            }
+        });
+        btnGrafos.add(menuItem);
         actualGraph = grafo;
         component.setGraph(grafo);
         draw.add(component);
@@ -217,11 +318,16 @@ public class App {
         }
         grafo.getModel().endUpdate();
         HashMap map = hash; // puede ser un problema.
-        GraphData data = new GraphData(grafo,graf,map);
+        GraphData data = new GraphData(grafo,graf,map,menuItem);
         listaGrafos.add(data);
         //postGraph(graf);
 
     }
+
+    /**
+     * Metodo encargado de cargar un nuevo grafo al API;
+     * @param grafo grafo que se desea cargar.
+     */
     private void postGraph(Graph grafo){// arreglar
         String json = gson.toJson(grafo);
         try {
@@ -245,6 +351,11 @@ public class App {
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
+            component = new mxGraphComponent(new mxGraph());
+            btnGrafos.removeAll();
+            listaGrafos.reset();
+            cont = 0;
+            actualGraph = null;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -287,14 +398,6 @@ public class App {
         }
         JOptionPane.showMessageDialog(null,resultado);
     }
-
-    private void agregarG(){
-        JLabel label = new JLabel("hidj");
-        label.setBounds(10,60,50,50);
-
-
-    }
-
     /**
      * Metodo encargado de buscar en la lista de grafos el grafo con el que se desea trabajar
      * @return
@@ -611,13 +714,6 @@ public class App {
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-    /**
-     * Metodo que muestra el grafo seleccionado en pantalla.
-     * @param graph grafo que se desea mostrar.
-     */
-    private void mostrarGrafo(mxGraph graph){
-        component.setGraph(graph);
     }
 
     public static void main(String[] args) {
