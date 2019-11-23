@@ -4,6 +4,8 @@ import Logic.*;
 import com.google.gson.Gson;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonObject;
 import com.sun.jndi.toolkit.url.UrlUtil;
 import sun.management.snmp.jvmmib.JvmRTBootClassPathEntryMBean;
 import sun.plugin2.message.Message;
@@ -129,7 +131,7 @@ public class App {
     private void getI(){
         try {
             String h = JOptionPane.showInputDialog("id");
-            String ryta = "http://localhost:4000/graph/?nombre=" + h;
+            String ryta = "http://localhost:4000/api/graphs/?nombre=" +h;
             URL url = new URL(ryta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -142,7 +144,9 @@ public class App {
             }
             System.out.println(content);
             in.close();
-            Graph graph = gson.fromJson(gson.toJson(content),Graph.class);
+            String contentGraph = content.toString();
+            System.out.println(contentGraph);
+            Graph graph = gson.fromJson(contentGraph, Graph.class);
             dibujarGrafo(graph);
             //System.out.println(status);
         }catch (Exception e){
