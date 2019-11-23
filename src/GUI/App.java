@@ -326,7 +326,7 @@ public class App {
         HashMap map = hash; // puede ser un problema.
         GraphData data = new GraphData(grafo,graf,map,menuItem);
         listaGrafos.add(data);
-        //postGraph(graf);
+        postGraph(graf);
 
     }
 
@@ -334,23 +334,42 @@ public class App {
      * Metodo encargado de cargar un nuevo grafo al API;
      * @param grafo grafo que se desea cargar.
      */
-    private void postGraph(Graph grafo){// arreglar
-        String json = gson.toJson(grafo);
+    private void postGraph(Graph grafo){// arreglar;
         int id = grafo.getId();
         Node[] n = grafo.getNodes();
+        String[] j = new String[n.length];
+        int cont = 0;
         for(Node no: n ){
-            
+            j[cont] = gson.toJson(no);
+
+            cont++;
         }
         Edge[] e = grafo.getEdges();
+        cont =0;
+        String[] m = new String[e.length];
+        for (Edge r: e){
+            m[cont] = gson.toJson(r);
+            cont++;
+        }
+        String A1= "[" + j[0];
+        for (int i =1; i<j.length;i++){
+            A1+= ","+ j[i] ;
+        }
+        A1 += "]";
+        String A2 = "[" + m[0];
+        for (int i =1; i<m.length;i++){
+            A2+= "," +j[i] ;
+        }
+        A2+= "]";
         try {
-            String ruta = "http://localhost:4000/api/graphs/";
+            String ruta = "http://localhost:4000/api/graphs/?num1=" +A1 +"&num2="+A2 ;
             URL url = new URL(ruta);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
 
 
-        }catch (Exception e){
-            System.out.println(e);
+        }catch (Exception f){
+            System.out.println(f);
         }
 
     }
