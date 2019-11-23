@@ -1,0 +1,17 @@
+{
+        "id":1,
+        "nodes":[ {
+            "id":1,
+            "inDegree":0,
+            "outDegree":9,
+            "entity":"8888-8888"
+        }
+    ],
+        "edges":[{
+            "id":1,
+            "startId":5,
+            "endId":2,
+            "weight":10
+        }
+    ]
+    }
